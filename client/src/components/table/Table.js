@@ -79,7 +79,7 @@ export default function BasicTable({ studentClass, getCheckedAttendance, classRe
                             <TableCell align="right">
                      
                                 <input type="checkbox" 
-                                checked={row.isPresent}
+                                defaultChecked={row.isPresent}
                                 value={row.id} 
                                 onChange={handleChange} />                           
                             </TableCell>
