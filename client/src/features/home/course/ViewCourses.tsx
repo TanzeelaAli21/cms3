@@ -17,7 +17,7 @@ const ViewCourse = () => {
   },[])
   const {courses} = useAppSelector(state=> state.course);
   const handleCLick = () => {
-    navigate("/courses/");
+    navigate("/courses/add");
   };    
   return (
     <>

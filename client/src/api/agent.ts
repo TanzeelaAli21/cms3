@@ -5,6 +5,8 @@ import {ISearchValue as teacherSearch} from '../features/home/teacher/ViewTecher
 import { ICreateClass } from '../models/class.model';
 import { IUser } from '../models/universal.model';
 import { INewStudent, INewTeacher} from '../models/user.model';
+import {ICreateAttendeceRecord} from '../models/attendence.model';
+import { IAttendenceRecord } from '../features/home/attendence/attendence.slice';
 
 axios.defaults.baseURL= 'http://localhost:1500/';
 
@@ -56,7 +58,8 @@ const classess = {
 }
 
 const attendence = {
-    markAttendence: (token: string, id: number, active: true | false) => requests.postWithToken('/mark-attendence',token, { id, active})
+    markAttendence: (token: string, id: number, active: true | false) => requests.postWithToken('/mark-attendence',token, { id, active}),
+    getAttendence: (token: string) =>requests.getWithToken(`/student-attendence`, token),
 }
 
 export default {

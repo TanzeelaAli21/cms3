@@ -1,25 +1,29 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 
+const Drop = ({ studentClass, classesData, handleClassChange }) => {
+  const handleChange = (event) => {
+    const currentClass = classesData.filter(
+      (classObj) => classObj.id == event.target.value
+    );
+    handleClassChange(currentClass[0]);
+    console.log(currentClass[0], "...currentClass.......");
 
-
- const Drop = ({studentClass, classesData,handleClassChange }) => {
-
-    const handleChange = (event) => {
-       const currentClass = classesData.filter((classObj) => classObj.id == event.target.value)
-        handleClassChange(currentClass[0]);
-        console.log(currentClass[0], "...currentClass.......");
-        
-        // setAge(event.target.value as string);
-      };
-      const list = classesData ? classesData.map((product, key) => <MenuItem value={product.id}>{product.course.courseName}</MenuItem>) : [];
+    // setAge(event.target.value as string);
+  };
+  const list = classesData
+    ? classesData.map((product, key) => (
+        <MenuItem value={product.id}>{product.course.courseName}</MenuItem>
+      ))
+    : [];
+  console.log("list", list);
 
   return (
-    <Box sx={{ minWidth: 150 }}>
+    <Box sx={{ minWidth: 300 }}>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Select Class</InputLabel>
         <Select
@@ -29,7 +33,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
           label="studentClass"
           onChange={handleChange}
         >
-            {list}
+          {list}
         </Select>
       </FormControl>
     </Box>

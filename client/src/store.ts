@@ -6,6 +6,7 @@ import alertifyReducer from './components/slices/alertify.slice';
 import studentReducer from './features/home/student/student.slice';
 import teacherReducer from './features/home/teacher/teacher.slice';
 import classReducer from './features/home/class/classes.slice';
+import attendenceReducer from './features/home/attendence/attendence.slice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
       grade: gradeReducer,
       students: studentReducer,
       teachers: teacherReducer,
+      attendence: attendenceReducer,
   },
 })
 

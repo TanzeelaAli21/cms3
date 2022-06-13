@@ -20,6 +20,7 @@ import ViewTecher from '../features/home/teacher/ViewTecher';
 import CreateClass from '../features/home/class/CreateClass';
 import Attendence from '../features/home/attendence/Attendence';
 import ViewClasses from '../features/home/class/ViewClasses';
+import StudentAttendence from '../features/home/attendence/StudentAttendence';
 const CustomRoutes = () => {
     return (
         <BrowserRouter>
@@ -43,7 +44,8 @@ const CustomRoutes = () => {
                     <Route path="/view-teacher" element={<ViewTecher />} />
                     <Route path="/create-class" element={<CreateClass />} />
                     <Route path="/view-class" element={<ViewClasses />} />
-                    <Route path="/mark-attendence" element={<Attendence />} />
+                    <Route path="/mark-attendence/:id" element={<Attendence />} />
+                    <Route path="/student-attendence/:id/:id" element={<StudentAttendence />} />
                     <Route path="/not-found" element={<PageNotFound />} />
                     <Route path="*" element={<PageNotFound />} />
                 </Route>

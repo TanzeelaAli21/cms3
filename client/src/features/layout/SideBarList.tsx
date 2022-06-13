@@ -49,18 +49,23 @@ const sideBarItems = {
                 icon: <People color="primary" />,
                 path: '/view-teacher'
             },
-             {
-                text: ' Attendence',
-                icon: <People color="primary" />,
-                path: '/mark-attendence'
-            },
+            //  {
+            //     text: ' Attendence',
+            //     icon: <People color="primary" />,
+            //     path: '/mark-attendence/0'
+            // },
+            // {
+            //     text: 'Student Attendence',
+            //     icon: <People color="primary" />,
+            //     path: '/student-attendence/0/0'
+            // },
             {
                 text: 'Grading Criteria',
                 icon: <Grade color="primary" />,
                 path: '/grading'
             },
         ],
-        allAuthorizedPaths: ['', 'profile', 'courses', 'grading', 'add-student', 'view-student', 'add-teacher', 'view-teacher','mark-attendence', 'create-class','view-class']
+        allAuthorizedPaths: ['', 'profile', 'courses', 'grading', 'add-student', 'view-student', 'add-teacher', 'view-teacher','mark-attendence', 'student-attendence', 'create-class','view-class']
     },
     TEACHER: {
         routes: [

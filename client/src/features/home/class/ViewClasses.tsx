@@ -1,10 +1,8 @@
 import { Add, Delete, Edit } from "@mui/icons-material";
 import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import React, { useEffect } from "react";
 import {useAppDispatch, useAppSelector} from '../../../hooks';
 import { useNavigate } from "react-router-dom";
-import { ICreateClass } from "../../../models/class.model";
 import { getClassesAsync } from '../class/classes.slice';
 import useGetHeight from "../../../custom hooks/useGetHeight";
 import { classTableHead } from "../../../models/class.model";
@@ -48,16 +46,10 @@ const ViewClasses = () => {
             ) : classes.map(item => (
               <TableRow key={item.id} hover>
                 <TableCell style={{minWidth: 100}}>{item.id}</TableCell>
-                {/* <TableCell style={{minWidth: 100}}>{item.courseId}</TableCell> */}
                 <TableCell style={{minWidth: 100}}>{item.course.courseId}</TableCell>
                 <TableCell style={{minWidth: 200}}>{item.course.courseName}</TableCell>
                 <TableCell style={{minWidth: 100}}>
-                  <IconButton
-                    onClick={() => navigate(`/view-classes/${item.id}`)}
-                    color="success"
-                  >
-                    <Edit />
-                  </IconButton>
+                  <IconButton onClick={() => navigate(`/mark-attendence/${item.id}`)} color="success" > <Edit /> </IconButton>
                 </TableCell>
               </TableRow>
             ))}

@@ -10,7 +10,8 @@ import {
   MenuItem
 } from "@mui/material";
 import * as yup from "yup";
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import useHandleFormik from "../../../custom hooks/useHandleFormik";
@@ -27,8 +28,6 @@ import AttendenceTable from "../../../components/table/Table";
 import agent from '../../../api/agent';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import axios from 'axios';
-
-
 
 let initialValue = {
   courseId: "",
@@ -61,8 +60,9 @@ const useStyles = makeStyles({
 
 const Attendence = () => {
 let studentAttendances = '';
-const [classesData, setClassesData] = React.useState([]);
 
+const [classesData, setClassesData] = React.useState([]);
+ const [className, setClassName] = React.useState('');
   useEffect(() => {
     // Update the document title using the browser API
     let token = localStorage.getItem('token') as string; 
@@ -72,35 +72,32 @@ const [classesData, setClassesData] = React.useState([]);
       }
     })
     .then(res => {
-      console.log("response ....", res);
-      setClassesData(res.data.classes);
+      console.log("response ....", res.data.classes[0].course.courseName);
       
+      handleClassName(res.data.classes);
+
+      setClassesData(res.data.classes);
     })
   }, []);
 
   const [value, setValue] = React.useState<Date | null>(
-    new Date('2014-08-18T21:11:54'),
+    new Date('2022-06-22'),
   );
   const [studentClass, setStudentClass] = React.useState('');
+  const [studentClassId, setStudentClassId] = React.useState();
   const [classRecord, setClassRecord] = React.useState([]);
   const [selectedRecord, setSelectedRecord] = React.useState('');
-  const [doUpdate, setDoUpdate] = React.useState(false);
-
-
-
+ 
+  const [doUpdate, setDoUpdate] = React.useState(false); 
   const onSelectRecord = (data: string) => {
-    console.log("row selected: ", data);
-    // console.log("row student class : ", studentClass);
-    console.log("classRecord", classRecord);
-
     setSelectedRecord(data[0])
     setDoUpdate(true);
   }
-  const handleClassChange = (event: string) => {
+  function handleClassChange (event: any) {
     console.log("receviedd ....", event);
+    setStudentClassId(event.id);
     setStudentClass(event);
     setDoUpdate(false);
-    // get class record
     let token = localStorage.getItem('token') as string; 
     axios.post(`/class/class-record`,{ currentClass: event }, {
       headers: {
@@ -110,7 +107,7 @@ const [classesData, setClassesData] = React.useState([]);
     .then(res => {
       console.log("response ...currentClass.", res);
       setClassRecord(res.data.classRecord);
-      
+      console.log("currentClass.", res.data.classRecord);
     })
     .catch((err) => {
       console.log("err........", err);
@@ -125,18 +122,28 @@ const [classesData, setClassesData] = React.useState([]);
   const handleChange = (newValue: Date | null) => {
     setValue(newValue);
   };
+  function handleClassName (newdata :any){
+    console.log("newdata",newdata);
+    var url = (window.location).href;
+    var newURL = url.split('/', 10);
+    var classId = newURL[4];
+    for(let i=0; i<newdata.length;i++){
+        if(newdata[i].id==classId){
+          setClassName(newdata[i].course.courseName);
+          handleClassChange(newdata[i]);
+        }
+      }
+  };
 
   const getCheckedAttendance = ( checkedStudents: string)=> {
     studentAttendances = checkedStudents;
     console.log(studentAttendances, ".....checkedStudents......");
-    //classStudent, studentAttendances submit both
   }
-
   const submitAttendence = () =>{
     console.log("submit attendence......");
     let token = localStorage.getItem('token') as string; 
     axios.post(`/attendence/create-attendence`,{
-      date: value, 
+      date: value,
       presents:studentAttendances,
        currentClass: studentClass,
        doUpdate: doUpdate,
@@ -148,21 +155,21 @@ const [classesData, setClassesData] = React.useState([]);
     })
     .then(res => {
       console.log("response ....", res);
+      console.log("res.data.classes ....", );
       setClassesData(res.data.classes);
+      
       dispatch(createAlert({
         message: res.data.message as string,
         open: true,
         severity: "success"
       }));
-      
+      window.location.reload();
     })
     .catch((err) => {
 
     })
   
   }
-
-
   const classes = useStyles();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -198,14 +205,15 @@ const [classesData, setClassesData] = React.useState([]);
         startIcon={<ArrowBackOutlined />}
         color="primary"
         variant="contained"
-        onClick={() => navigate("/mark-attendence")}
+        onClick={() => navigate("/view-class")}
       >
         Go Back
       </Button>
       <Paper
         className={classes.paper}
         variant="elevation"
-        elevation={4}
+        // elevation={4}
+        
       >
         <form noValidate onSubmit={handleSubmit}>
           <Stack sx={{ mt: 1 }}>
@@ -218,50 +226,53 @@ const [classesData, setClassesData] = React.useState([]);
               Mark Attendance
             </Typography>
             <Grid container justifyContent={"space-between"}>
-              {/* <Grid item xs={4} sm={4} md={4} lg={4}>
-                    <TextField label="Designation" select value={searchValue.designation}
-                    onChange={(e)=>handleChanges(e.target.name, e.target.value)}
-                    margin="dense" size="small" name="designation" fullWidth>
-                        <MenuItem value={""}>Select</MenuItem>
-                        {
-                            designations.map((item,index)=><MenuItem key={index} value={item.value.toUpperCase()} >{item.title}</MenuItem>)
-                        }
-                    </TextField>
-                </Grid> */}
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <Stack spacing={3}>
-
-
-                  <DateTimePicker
-                    label="Date&Time picker"
+                  {/* <DatePicker
+                    label="Select Date"
+                    inputFormat="dd/MM/yyyy"
                     value={value}
                     onChange={handleChange}
                     renderInput={(params) => <TextField {...params} />}
                     disabled = {doUpdate}
-                  />
+                  /> */}
+                  <DesktopDatePicker
+                  label="Date desktop"
+                  inputFormat="MM/dd/yyyy"
+                  value={value}
+                  onChange={handleChange}
+                  renderInput={(params) => <TextField {...params} />}
+        />
                 </Stack>
               </LocalizationProvider>
-
-              <Drop
+              <Grid>
+                <Typography
+                  variant="h2"
+                  component="h2"
+                  fontSize="25px"
+                  align="left"
+                >
+                Class Name: {className}
+              </Typography>
+              </Grid>
+              {/* <Drop
                 studentClass = {studentClass}
                 classesData = {classesData}
                 handleClassChange={handleClassChange}
-              />
-
+              /> */}
+              {/* <Grid container justifyContent={"space-between"}>
+              
+              </Grid> */}
             </Grid>
-            {/* {studentClass ? <Checkbox 
-              studentClass = {studentClass}
-              getCheckedAttendance = {getCheckedAttendance}
-              updateAttendence = {updateAttendence} 
-              selectedRecord = {selectedRecord}
-             /> : null} */}
             <AttendenceTable 
               studentClass = {studentClass}
               getCheckedAttendance = {getCheckedAttendance}
               classRecord = {classRecord}
               selectedRecord = {selectedRecord}
               doUpdate = {doUpdate}
+              studentClassId = {studentClassId}
             />
+
             <Box
               sx={{
                 mt: 2,
