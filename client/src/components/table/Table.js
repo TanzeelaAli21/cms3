@@ -134,7 +134,7 @@ export default function BasicTable({
       <Table sx={{ minWidth: 500 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>RollNo</TableCell>
+            <TableCell>Roll No</TableCell>
             <TableCell align="center">IsPresent</TableCell>
             <TableCell align="center">View</TableCell>
             <TableCell align="right">

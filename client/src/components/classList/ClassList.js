@@ -16,7 +16,7 @@ export default function ListClassRecord({ classRecord, onSelectRecord }) {
   classRecord.forEach((element) => {
     rows.push({
       id: element.id,
-      date: new Date(element.createdAt).toISOString().slice(0, 10),
+      date: new Date().toISOString().slice(0, 10),
     });
   });
   // Date(.replace(/-/g, "/"))
