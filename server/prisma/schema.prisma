@@ -90,6 +90,8 @@ model AttendanceRecord {
   classId   Int
   class     Class    @relation(fields: [classId], references: [id])
   attendances Attendance[]
+  studentIds       Int[]
+
 }
 
 model Attendance {

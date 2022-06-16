@@ -38,7 +38,8 @@ exports.markAttendenceasync = async (req, res, next) => {
       studentId: person.RollNo,
       isPresent: presents.indexOf(person.RollNo) != -1 ? true : false,
     }));
-    next(new ErrorResponse("Unauthorized route", 401));
+    const studentIds = req.body.currentClass.studentIds;
+    // next(new ErrorResponse("Unauthorized route", 401));
     if (!classId || !date)
       next(new ErrorResponse("Enter correct details", 400));
 
@@ -66,30 +67,24 @@ exports.markAttendenceasync = async (req, res, next) => {
         },
       });
     } else {
-      const create = await prisma.attendanceRecord.create({
-        data: {
-          classId: parseInt(classId),
-          createdAt: date,
-        },
-      });
-      if (create) {
-        let result = attendances.map((obj) => ({
-          ...obj,
-          attendanceRecordId: create.id,
-          studentId: obj.studentId,
-          isPresent: obj.isPresent,
-        }));
-        console.log("......", result);
-        const createMany = await prisma.attendance.createMany({
-          data: result,
-          skipDuplicates: true,
-        });
-        console.log("attendance records ..", createMany);
+
+        const record = await prisma.attendanceRecord.create({
+          data: {
+            classId: parseInt(classId),
+            createdAt: date,
+            studentIds,
+            attendances: {
+              create: attendances,
+            },
+          },
+        })
+        console.log(record, "....record....");
         res.status(200).json({
           success: true,
           message: "attendance marked successfully",
         });
-      }
+      // }
+
     }
   } catch (error) {
     console.log(error);
