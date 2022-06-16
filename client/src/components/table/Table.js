@@ -5,10 +5,19 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Button, IconButton } from "@mui/material";
 import { Add, Delete, Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Button,
+  IconButton,
+  Grid,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+  MenuItem,
+} from "@mui/material";
 
 export default function BasicTable({
   studentClass,
@@ -17,11 +26,13 @@ export default function BasicTable({
   selectedRecord,
   doUpdate,
   studentClassId,
+  selectedDate,
 }) {
   const rows = [];
   let presentStudents = [];
   const [isUpdate, setIsUpdate] = React.useState(false);
   const [studentPresent, setStudentPresent] = React.useState(0);
+  const [selectedDate1, setSelectedDate1] = React.useState(selectedDate);
   const [studentAttendanceStatus, setStudentAttendanceStatus] = React.useState(
     []
   );
@@ -33,42 +44,7 @@ export default function BasicTable({
   console.log(studentClass, "studentClassId1");
   let editRecord = null;
   var presentStatusData = [];
-  // let resultArray = [];
-  // let studentData = {};
-  // let present = 0;
-  // let absent = 0;
-  // for (let i = 0; i < classRecord.length; i++) {
-  //   const testArray = [];
-  //   for (let j = 0; j < classRecord[i].attendances.length; j++) {
-  //     if (classRecord[i].attendances[j].isPresent === true) {
-  //       // newClassData.push({
-  //       //   studentId: classRecord[i].attendances[j].studentId,
-  //       //   present: present++,
-  //       //   absent: absent,
-  //       // });
-  //       studentData = {
-  //         studentId: classRecord[i].attendances[j].studentId,
-  //         present: present++,
-  //         absent: absent,
-  //       };
-  //       testArray.push(studentData);
-  //     } else {
-  //       // newClassData.push({
-  //       //   studentId: classRecord[i].attendances[j].studentId,
-  //       //   absent: absent++,
-  //       //   present: present,
-  //       // });
-  //       studentData = {
-  //         studentId: classRecord[i].attendances[j].studentId,
-  //         present: present,
-  //         absent: absent++,
-  //       };
-  //       testArray.push(studentData);
-  //     }
-  //   }
-  //   resultArray.push(testArray);
-  // }
-  // console.log("resultArray", resultArray);
+  console.log(studentClass, ".............studentClass44..........");
   if (selectedRecord) {
     editRecord = classRecord.find((record) => record.id == selectedRecord);
     editRecord.attendances.forEach((element) => {
@@ -131,13 +107,10 @@ export default function BasicTable({
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 500 }} aria-label="simple table">
+      <Table sx={{ minWidth: "100%" }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Roll No</TableCell>
-            <TableCell align="center">IsPresent</TableCell>
-            <TableCell align="center">View</TableCell>
-            <TableCell align="right">
+            <TableCell align="left">
               <Button
                 sx={{ marginBottom: "15px", marginTop: "15px" }}
                 style={{
@@ -150,12 +123,17 @@ export default function BasicTable({
                 Select All
               </Button>
             </TableCell>
-            <TableCell align="right">
+            <TableCell align="left">
               <Button
-                sx={{ marginBottom: "15px", marginTop: "15px" }}
+                sx={{
+                  marginBottom: "15px",
+                  marginTop: "15px",
+                  marginRight: "70px",
+                }}
                 style={{
                   backgroundColor: "white",
                   color: "grey",
+                  align: "left",
                 }}
                 variant="contained"
                 onClick={handleUnSelectAll}
@@ -163,19 +141,45 @@ export default function BasicTable({
                 Unselect All
               </Button>
             </TableCell>
+            <TableCell></TableCell>
+            <TableCell align="center"></TableCell>
+            <TableCell align="center"></TableCell>
+          </TableRow>
+        </TableHead>
+      </Table>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Sr No.</TableCell>
+            <TableCell>Student ID</TableCell>
+            <TableCell>Student Name</TableCell>
+            <TableCell>16-06-2022</TableCell>
+            <TableCell>
+              <Grid
+                style={{
+                  textAlign: "center",
+                }}
+              >
+                <Button>E</Button>|<Button>D</Button>
+                <br />
+                <center>08</center>
+              </Grid>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows
             .sort((a, b) => (a.id > b.id ? 1 : -1))
-            .map((row) => (
+            .map((row, i) => (
               <TableRow
                 key={row.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
+                <TableCell>{i + 1}</TableCell>
                 <TableCell component="th" scope="row">
                   {row.id}
                 </TableCell>
+                <TableCell>Mawra Shafqat</TableCell>
                 <TableCell align="center">
                   <input
                     type="checkbox"
@@ -184,27 +188,7 @@ export default function BasicTable({
                     onChange={handleChange}
                   />
                 </TableCell>
-                <TableCell align="center">
-                  <IconButton
-                    onClick={() =>
-                      navigate(
-                        `/student-attendence/${row.id}/${studentClassId}`
-                      )
-                    }
-                    color="primary"
-                  >
-                    <Visibility />
-                  </IconButton>
-                </TableCell>
-                {/* {newClassData.map((data, index) => {
-                  row.id == data[index].studentId ? (
-                    <TableCell>{data[index].present}</TableCell>
-                  ) : (
-                    <TableCell></TableCell>
-                  );
-                })} */}
-                <TableCell align="center"></TableCell>
-                <TableCell></TableCell>
+                <TableCell align="center">P</TableCell>
               </TableRow>
             ))}
         </TableBody>

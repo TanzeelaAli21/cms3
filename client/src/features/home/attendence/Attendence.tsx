@@ -222,6 +222,7 @@ const [classesData, setClassesData] = React.useState([]);
               component="h1"
               fontSize="30px"
               align="center"
+              marginBottom="30px"
             >
               Mark Attendance
             </Typography>
@@ -251,6 +252,7 @@ const [classesData, setClassesData] = React.useState([]);
                   component="h2"
                   fontSize="25px"
                   align="left"
+                  marginRight="15px"
                 >
                 Class Name: {className}
               </Typography>
@@ -271,6 +273,7 @@ const [classesData, setClassesData] = React.useState([]);
               selectedRecord = {selectedRecord}
               doUpdate = {doUpdate}
               studentClassId = {studentClassId}
+              selectedDate={value}
             />
 
             <Box
@@ -296,7 +299,7 @@ const [classesData, setClassesData] = React.useState([]);
                 fullWidth
                 onClick={submitAttendence}
               >
-                Save
+                Submit Attendance
               </Button>
 
             </Box>

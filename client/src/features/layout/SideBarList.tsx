@@ -132,8 +132,7 @@ const SideBarList:React.FC<ISideBarList> = ({handleOpen}) => {
         <ListItemText primary={`Welcome Back ${user?.name}!`} />
     </ListItem>
     <Divider sx={{display: {sm: 'block', xs: 'block', md: 'none'}}} />
-        {
-            (user !== null && sideBarItems !== null) && sideBarItems[`${user.role}`].routes.map(item=>{
+        {(user !== null && sideBarItems !== null) && sideBarItems[`${user.role}`].routes.map(item=>{
                 return <ListItem 
                         sx={{
                             backgroundColor: (locationPath === item.path.split('/')[1] ? '#dde1e4' : 'default'),
@@ -142,8 +141,7 @@ const SideBarList:React.FC<ISideBarList> = ({handleOpen}) => {
                             color: 'rgba(0,0,0,0.75)',
                             ":hover": {
                                 backgroundColor: (locationPath === item.path.split('/')[1] ? '#dde1e4' : 'default')
-                            }
-                            }} 
+                            }}} 
                         onClick={()=>handleClick(item.path)} 
                         key={item.text}
                         button >

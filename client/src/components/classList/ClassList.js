@@ -8,7 +8,7 @@ export default function ListClassRecord({ classRecord, onSelectRecord }) {
     {
       field: "date",
       headerName: "Attendence Date",
-      width: 150,
+      width: 200,
       editable: true,
     },
   ];
