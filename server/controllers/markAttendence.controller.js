@@ -119,3 +119,66 @@ exports.getStudentAttendance = async (req, res, next) => {
     });
   }
 };
+
+
+exports.getClassStudentAttendences = async (req, res, next) => {
+  try {
+    const { role } = req.User;
+    if (!validateUser.checkAdmin(role)) {
+      next(new ErrorResponse("Unauthorized route", 401));
+    }
+
+    console.log("params", req.params);
+    let allClasses = await prisma.class.findUnique({
+      where: {
+        id: parseInt(req.query.cid),
+      },
+      select: {
+        teacher: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        students: {
+          select: {
+            id: true,
+            name: true,
+            RollNo: true,
+          },
+        }
+      },
+    });
+    const studentIds = allClasses.students.map(stu => stu.RollNo)
+    const attendences = await prisma.attendance.findMany({
+      where: {
+        studentId: {in: studentIds}
+      },
+      select: {
+        createdAt: true,
+        isPresent: true,
+        studentId: true,
+      }
+    })
+    const students = []
+  allClasses.students.forEach((student, index) => {
+    students.push({...student, studentAttendance: []})
+    attendences.forEach((attendence, index2) => {
+      if (attendence.studentId == student.RollNo) {
+          students[index].studentAttendance.push(JSON.stringify(attendence))
+      }
+    })
+  })
+    allClasses.students = students
+    res.status(200).json({
+      success: true,
+      classes: allClasses,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: error.message | "server error",
+    });
+  }
+};
