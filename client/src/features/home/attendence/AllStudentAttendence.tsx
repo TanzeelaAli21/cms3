@@ -71,9 +71,12 @@ let studentAttendances = '';
     var classId = url.substring(url.lastIndexOf('/') + 1);
     let token = localStorage.getItem('token') as string;
     console.log(`/attendence/get-all-attendence/${classId}`); 
-    axios.get(`/attendence/get-all-attendence/${classId}`, {
+    axios.get(`/attendence/get-all-attendence`, {
       headers: {
         'Authorization': `Bearer ${token}`
+      },
+      params: {
+        cid: classId
       }
     }).then((res) => {
       console.log("mawra", res);

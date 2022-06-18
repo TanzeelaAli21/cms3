@@ -121,7 +121,7 @@ exports.getStudentAttendance = async (req, res, next) => {
 exports.getClassStudentAttendences = async (req, res, next) => {
   try {
     const { role } = req.User;
-    if (!validateUser.checkAdmin(role) || !validateUser.checkTeacher(role)) {
+    if (!validateUser.checkAdmin(role)) {
       next(new ErrorResponse("Unauthorized route", 401));
     }
     console.log("params", req.params);
