@@ -312,15 +312,48 @@ exports.updateStudentAttendenceById = async (req, res, next) => {
 exports.updateStudentAttendencRecordById = async (req, res, next) => {
   try {
     const { role } = req.User;
-    const{id,attendences} = req.body;
+    const{attendanceRecordId,attendances} = req.body;
     if (!validateUser.checkAdmin(role)) {
       next(new ErrorResponse("Unauthorized route", 401));
     }
-
+    const presents = attendances.map(att => {
+      if (att.isPresent == 'true')
+          return att.studentId
+      else
+          return ''
+    })
+    const absents = attendances.map(att => {
+      if (att.isPresent == 'false')
+          return att.studentId
+      else
+          return ''    
+    })
+    const presentAttendence =  prisma.attendance.updateMany({
+      where: {
+          attendanceRecordId: parseInt(attendanceRecordId),
+          studentId: { in: presents },
+        },
+      data: {
+        isPresent: true
+      }
+    });
+    const absentAttendence =  prisma.attendance.updateMany({
+      where: {
+          attendanceRecordId: parseInt(attendanceRecordId),
+          studentId: { in: absents },
+        },
+      data: {
+        isPresent: false
+      }
+    });
+    const transaction = await prisma.$transaction([
+      presentAttendence,
+      absentAttendence,
+    ]);
 
     res.status(200).json({
       success: true,
-      attendance: updatedAttendence,
+      attendance: transaction,
     });
   }
   catch (error) {
