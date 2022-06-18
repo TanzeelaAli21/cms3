@@ -39,13 +39,24 @@ exports.createClass = async (req, res, next) => {
 exports.getAllClasses = async (req, res, next) => {
   try {
     const { role } = req.User;
-    if (!validateUser.checkAdmin(role)) {
+    let allClasses = null;
+    let param = {};
+    if (validateUser.checkAdmin(role)) {
+      param = {
+        enrolled: true,
+      }
+    }
+    else if (validateUser.checkTeacher(role)){
+      param = {
+        enrolled: true,
+        teacherId: req.User.id
+      }
+    }
+    else {
       next(new ErrorResponse("Unauthorized route", 401));
     }
-    const allClasses = await prisma.class.findMany({
-      where: {
-        enrolled: true,
-      },
+    allClasses = await prisma.class.findMany({
+      where: param,
       orderBy: {
         courseId: "asc",
       },

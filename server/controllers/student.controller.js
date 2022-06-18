@@ -4,6 +4,7 @@ const ErrorResponse = require('../utils/Error');
 
 exports.ViewStudents = async (req,res,next) =>{
     try{
+
         const { name, rollNo} = req.query;
         const {role} = req.User;
         if(!validateUser.checkAdmin(role))
@@ -39,7 +40,6 @@ exports.ViewStudents = async (req,res,next) =>{
                 RollNo: true 
             }
         });
-
         res.status(200).json({
             success: true,
             students: allStudents

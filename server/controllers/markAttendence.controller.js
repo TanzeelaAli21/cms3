@@ -121,14 +121,25 @@ exports.getStudentAttendance = async (req, res, next) => {
 exports.getClassStudentAttendences = async (req, res, next) => {
   try {
     const { role } = req.User;
-    if (!validateUser.checkAdmin(role)) {
+    console.log(req.User, "user..........");
+    let allClasses = null;
+    let params = {};
+    if (validateUser.checkAdmin(role)) {
+      params = {
+        id: parseInt(req.query.cid),
+      }
+    }
+    else if (validateUser.checkTeacher(role)) {
+      params = {
+        id: parseInt(req.query.cid),
+        teacherId: req.User.id
+      }
+    }
+    else {
       next(new ErrorResponse("Unauthorized route", 401));
     }
-    console.log("params", req.params);
-    let allClasses = await prisma.class.findUnique({
-      where: {
-        id: parseInt(req.query.cid),
-      },
+    allClasses = await prisma.class.findUnique({
+      where: params,
       select: {
         teacher: {
           select: {
