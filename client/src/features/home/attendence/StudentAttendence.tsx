@@ -30,7 +30,6 @@ const StudentAttendence = () => {
     setStudentId(studentId);
     const getAttendence = async () => await dispatch(getAttendenceRecordAsync(localStorage.getItem('token') as string));
     getAttendence();
-    
     axios.get(`/attendence/student-attendence/${classId}/${studentId}`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`

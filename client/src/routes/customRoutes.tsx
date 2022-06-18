@@ -19,6 +19,7 @@ import AddTeacher from '../features/home/teacher/AddTeacher';
 import ViewTecher from '../features/home/teacher/ViewTecher';
 import CreateClass from '../features/home/class/CreateClass';
 import Attendence from '../features/home/attendence/Attendence';
+import AllStudentAttendence from '../features/home/attendence/AllStudentAttendence';
 import ViewClasses from '../features/home/class/ViewClasses';
 import StudentAttendence from '../features/home/attendence/StudentAttendence';
 const CustomRoutes = () => {
@@ -45,6 +46,7 @@ const CustomRoutes = () => {
                     <Route path="/create-class" element={<CreateClass />} />
                     <Route path="/view-class" element={<ViewClasses />} />
                     <Route path="/mark-attendence/:id" element={<Attendence />} />
+                    <Route path="/get-all-attendence/:id" element={<AllStudentAttendence />} />
                     <Route path="/student-attendence/:id/:id" element={<StudentAttendence />} />
                     <Route path="/not-found" element={<PageNotFound />} />
                     <Route path="*" element={<PageNotFound />} />

@@ -65,7 +65,7 @@ const sideBarItems = {
                 path: '/grading'
             },
         ],
-        allAuthorizedPaths: ['', 'profile', 'courses', 'grading', 'add-student', 'view-student', 'add-teacher', 'view-teacher','mark-attendence', 'student-attendence', 'create-class','view-class']
+        allAuthorizedPaths: ['', 'profile', 'courses', 'grading', 'add-student', 'view-student', 'add-teacher', 'view-teacher','mark-attendence','get-all-attendence', 'student-attendence', 'create-class','view-class']
     },
     TEACHER: {
         routes: [
@@ -74,13 +74,18 @@ const sideBarItems = {
                 icon: <HomeOutlined color="primary" />,
                 path: '/'
             },
+             {
+                text: 'View Classes',
+                icon: <Create color="primary" />,
+                path: '/view-class'
+            },
             {
                 text: 'Grading Criteria',
                 icon: <Grade color="primary" />,
                 path: '/grading'
             }
         ],
-        allAuthorizedPaths: ['', 'profile', 'grading']
+        allAuthorizedPaths: ['', 'profile', 'view-class', 'grading']
     },
     STUDENT: {
         routes: [
@@ -95,7 +100,7 @@ const sideBarItems = {
                 path: '/grading'
             }
         ],
-        allAuthorizedPaths: ['', 'profile', 'grading']
+        allAuthorizedPaths: ['', 'profile', 'view-class', 'grading']
     }
 }
 

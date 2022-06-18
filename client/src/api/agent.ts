@@ -60,6 +60,7 @@ const classess = {
 const attendence = {
     markAttendence: (token: string, id: number, active: true | false) => requests.postWithToken('/mark-attendence',token, { id, active}),
     getAttendence: (token: string) =>requests.getWithToken(`/student-attendence`, token),
+    getAllAttendence:(token: string)=>requests.getWithToken(`/get-all-attendence`, token)
 }
 
 export default {

@@ -67,24 +67,22 @@ exports.markAttendenceasync = async (req, res, next) => {
         },
       });
     } else {
-
-        const record = await prisma.attendanceRecord.create({
-          data: {
-            classId: parseInt(classId),
-            createdAt: date,
-            studentIds,
-            attendances: {
-              create: attendances,
-            },
+      const record = await prisma.attendanceRecord.create({
+        data: {
+          classId: parseInt(classId),
+          createdAt: date,
+          studentIds,
+          attendances: {
+            create: attendances,
           },
-        })
-        console.log(record, "....record....");
-        res.status(200).json({
-          success: true,
-          message: "attendance marked successfully",
-        });
+        },
+      });
+      console.log(record, "....record....");
+      res.status(200).json({
+        success: true,
+        message: "attendance marked successfully",
+      });
       // }
-
     }
   } catch (error) {
     console.log(error);
@@ -120,14 +118,12 @@ exports.getStudentAttendance = async (req, res, next) => {
   }
 };
 
-
 exports.getClassStudentAttendences = async (req, res, next) => {
   try {
     const { role } = req.User;
-    if (!validateUser.checkAdmin(role)) {
+    if (!validateUser.checkAdmin(role) || !validateUser.checkTeacher(role)) {
       next(new ErrorResponse("Unauthorized route", 401));
     }
-
     console.log("params", req.params);
     let allClasses = await prisma.class.findUnique({
       where: {
@@ -146,30 +142,30 @@ exports.getClassStudentAttendences = async (req, res, next) => {
             name: true,
             RollNo: true,
           },
-        }
+        },
       },
     });
-    const studentIds = allClasses.students.map(stu => stu.RollNo)
+    const studentIds = allClasses.students.map((stu) => stu.RollNo);
     const attendences = await prisma.attendance.findMany({
       where: {
-        studentId: {in: studentIds}
+        studentId: { in: studentIds },
       },
       select: {
         createdAt: true,
         isPresent: true,
         studentId: true,
-      }
-    })
-    const students = []
-  allClasses.students.forEach((student, index) => {
-    students.push({...student, studentAttendance: []})
-    attendences.forEach((attendence, index2) => {
-      if (attendence.studentId == student.RollNo) {
-          students[index].studentAttendance.push(JSON.stringify(attendence))
-      }
-    })
-  })
-    allClasses.students = students
+      },
+    });
+    const students = [];
+    allClasses.students.forEach((student, index) => {
+      students.push({ ...student, studentAttendance: [] });
+      attendences.forEach((attendence, index2) => {
+        if (attendence.studentId == student.RollNo) {
+          students[index].studentAttendance.push(JSON.stringify(attendence));
+        }
+      });
+    });
+    allClasses.students = students;
     res.status(200).json({
       success: true,
       classes: allClasses,
