@@ -79,7 +79,7 @@ let studentAttendances = '';
         cid: classId
       }
     }).then((res) => {
-      console.log("mawra", res);
+      console.log("mawra", res.data);
     }).catch(error=>console.log('error123',error));
   };
   useEffect(() => {
