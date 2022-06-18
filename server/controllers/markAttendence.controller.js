@@ -151,6 +151,7 @@ exports.getClassStudentAttendences = async (req, res, next) => {
         studentId: { in: studentIds },
       },
       select: {
+        id: true,
         createdAt: true,
         isPresent: true,
         studentId: true,
@@ -169,6 +170,104 @@ exports.getClassStudentAttendences = async (req, res, next) => {
     res.status(200).json({
       success: true,
       classes: allClasses,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: error.message | "server error",
+    });
+  }
+};
+
+exports.deleteStudentAttendenceById = async (req, res, next) => {
+  try {
+    const { role } = req.User;
+    if (!validateUser.checkAdmin(role)) {
+      next(new ErrorResponse("Unauthorized route", 401));
+    }
+
+    const deletedAttendence = await prisma.attendance.delete({
+      where: { id: parseInt(req.query.id) },
+    });
+
+    console.log(req.query, "query......");
+    res.status(200).json({
+      success: true,
+      attendance: deletedAttendence,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: error.message | "server error",
+    });
+  }
+};
+
+exports.deleteStudentAttendenceRecordById = async (req, res, next) => {
+  try {
+    const { role } = req.User;
+    if (!validateUser.checkAdmin(role)) {
+      next(new ErrorResponse("Unauthorized route", 401));
+    }
+
+    const deletedAttendence = prisma.attendance.deleteMany({
+      where: { attendanceRecordId: parseInt(req.query.id) },
+    });
+    const deletedRecord = prisma.attendanceRecord.delete({
+      where: { id: parseInt(req.query.id) },
+    });
+    const transaction = await prisma.$transaction([
+      deletedAttendence,
+      deletedRecord,
+    ]);
+
+    res.status(200).json({
+      success: true,
+      attendance: transaction,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: error.message | "server error",
+    });
+  }
+};
+
+exports.deleteStudentAttendenceRecordByDate = async (req, res, next) => {
+  try {
+    const { role } = req.User;
+    if (!validateUser.checkAdmin(role)) {
+      next(new ErrorResponse("Unauthorized route", 401));
+    }
+    const deleteRecord = await prisma.attendanceRecord.findMany({
+      where: {
+        createdAt: {
+          equals: req.query.date,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+    const record = deleteRecord.map((val) => val.id);
+    const deletedRecord = await prisma.attendance.deleteMany({
+      where: {
+        attendanceRecordId: { in: record },
+      },
+    });
+
+    const deletedR = await prisma.attendanceRecord.deleteMany({
+      where: {
+        id: { in: record },
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      attendance: record,
     });
   } catch (error) {
     console.log(error);
