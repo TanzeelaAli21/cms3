@@ -276,4 +276,58 @@ exports.deleteStudentAttendenceRecordByDate = async (req, res, next) => {
       message: error.message | "server error",
     });
   }
-};
+
+}
+
+exports.updateStudentAttendenceById = async (req, res, next) => {
+  try {
+    const { role } = req.User;
+    const{id,isPresent} = req.body;
+    if (!validateUser.checkAdmin(role)) {
+      next(new ErrorResponse("Unauthorized route", 401));
+    }
+    const updatedAttendence = await prisma.attendance.update({
+      where: {
+         id: parseInt(id) 
+        },
+      data: {
+        isPresent: isPresent == 'true' ? true : false
+      }  
+    })
+
+    res.status(200).json({
+      success: true,
+      attendance: updatedAttendence,
+    });
+  }
+  catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: error.message | "server error",
+    });
+  }
+}
+
+exports.updateStudentAttendencRecordById = async (req, res, next) => {
+  try {
+    const { role } = req.User;
+    const{id,attendences} = req.body;
+    if (!validateUser.checkAdmin(role)) {
+      next(new ErrorResponse("Unauthorized route", 401));
+    }
+
+
+    res.status(200).json({
+      success: true,
+      attendance: updatedAttendence,
+    });
+  }
+  catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: error.message | "server error",
+    });
+  }
+}

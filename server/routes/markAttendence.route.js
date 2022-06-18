@@ -14,4 +14,12 @@ router
   .route("/delete-attendencerecord-by-date")
   .delete(actions.deleteStudentAttendenceRecordByDate);
 
+router
+    .route("/update-attendence-by-id")
+    .patch(actions.updateStudentAttendenceById);
+
+router
+    .route("/update-attendencerecord-by-id")
+    .patch(actions.updateStudentAttendencRecordById);
+
 module.exports = router;
