@@ -63,6 +63,7 @@ const getStudentAttendence = (classId: string) => {
             :
                 <AttendenceTable attendenceList = {attendenceList} classId = {classId}/>
             }
+
       </TableContainer>
       </Paper>
     </>

@@ -1,4 +1,5 @@
-import React, {useEffect} from "react";
+import React, {Fragment, useEffect,useState} from "react";
+// import * as React, { useState } from 'react'
 import {
   Box,
   Button,
@@ -11,7 +12,7 @@ import {
 } from "@mui/material";
 import * as yup from "yup";
 // import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import useHandleFormik from "../../../custom hooks/useHandleFormik";
@@ -28,6 +29,12 @@ import AttendenceTable from "../../../components/table/Table";
 import agent from '../../../api/agent';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { getAttendenceRecordAsync } from '../attendence/attendence.slice';
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import axios from 'axios';
 
 let initialValue = {
@@ -35,6 +42,8 @@ let initialValue = {
   courseName: "",
   creditHours: "",
 };
+
+
 
 const validationSchema = yup.object().shape({
   courseId: yup
@@ -61,16 +70,20 @@ const useStyles = makeStyles({
 
 const AllStudentAttendence = () => {
 let studentAttendances = '';
-
+// let newArray:any = [];
+let newChecked:any = [];
+ let rows:any =[];
+let newDate = '';
+var classId:any =0;
   const [classesData, setClassesData] = React.useState([]);
   const [className, setClassName] = React.useState('');
-
-
+  const [attendenceData, setAttendenceData] = useState<any[]>([]);
+  const [newArray, setNewArray] = useState<any[]>([]);
+  const [newArrayLength, setNewArrayLength] = useState(0);
   const getData = async () => {
     var url = (window.location).href;
     var classId = url.substring(url.lastIndexOf('/') + 1);
     let token = localStorage.getItem('token') as string;
-    console.log(`/attendence/get-all-attendence/${classId}`); 
     axios.get(`/attendence/get-all-attendence`, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -79,17 +92,31 @@ let studentAttendances = '';
         cid: classId
       }
     }).then((res) => {
-      console.log("mawra", res.data);
+      setAttendenceData(res.data.classes.students);
+      // newArray= res.data.classes.students[0].studentAttendance;
+      setNewArray (res.data.classes.students[0].studentAttendance);
+      setNewArrayLength(newArray.length);
+      console.log("newArray",newArray)
     }).catch(error=>console.log('error123',error));
   };
   useEffect(() => {
+    let token = localStorage.getItem('token') as string; 
+    axios.get(`/class/get-students`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(res => {
+      handleClassName(res.data.classes);
+      setClassesData(res.data.classes);
+    })
     getData();
   }, []);
 
-  const [value, setValue] = React.useState<Date | null>(
-    new Date(),
-  );
+  const [value, setValue] = React.useState<Date | null>(new Date);
+  
   const [studentClass, setStudentClass] = React.useState('');
+  const [first, setFirst] = React.useState('');
   const [studentClassId, setStudentClassId] = React.useState();
   const [classRecord, setClassRecord] = React.useState([]);
   const [selectedRecord, setSelectedRecord] = React.useState('');
@@ -103,6 +130,7 @@ let studentAttendances = '';
     console.log("receviedd ....", event);
     setStudentClassId(event.id);
     setStudentClass(event);
+    newChecked = event;
     setDoUpdate(false);
     let token = localStorage.getItem('token') as string; 
     axios.post(`/class/class-record`,{ currentClass: event }, {
@@ -127,12 +155,18 @@ let studentAttendances = '';
   };
   const handleChange = (newValue: Date | null) => {
     setValue(newValue);
+   let n:any =  newValue;
+   let y:any = n.getFullYear();
+   let m:any = n.getMonth() + 1;
+   let d:any = n.getDate();
+   newDate = m + "/" + d + "/" + y;
+   setFirst(m + "/" + d + "/" + y);
   };
   function handleClassName (newdata :any){
     console.log("newdata",newdata);
     var url = (window.location).href;
     var newURL = url.split('/', 10);
-    var classId = newURL[4];
+     classId = newURL[4];
     for(let i=0; i<newdata.length;i++){
         if(newdata[i].id==classId){
           setClassName(newdata[i].course.courseName);
@@ -199,6 +233,39 @@ let studentAttendances = '';
         navigate("/mark-attendence");
       }, 500);
   };
+    const handleSelectAll = () => {
+      newChecked = studentClass;
+      newChecked.students.map((element:any, index:any) => {
+      const checkbox = document.getElementById( `${element.RollNo}`, ) as HTMLInputElement | null;
+      if (checkbox != null) {
+        checkbox.checked = true;
+      }
+      });
+  };
+
+      const handleUnselectAll = () => {
+      newChecked = studentClass;
+      newChecked.students.map((element:any, index:any) => {
+      const checkbox = document.getElementById( `${element.RollNo}`, ) as HTMLInputElement | null;
+      if (checkbox != null) {
+        checkbox.checked = false;
+      }
+      });
+  };
+    const handleCheckBoxChange = (event:any) => {
+     
+      if (event.target.checked) {
+        rows.push(event.target.value);
+      } else{
+        rows = rows.filter(
+        (val:any) => val != event.target.value
+      );
+      }
+      studentAttendances = rows;
+      console.log("event",rows);
+ 
+  };
+ 
   const { getFieldProps, handleSubmit, touched, errors, values } = useHandleFormik(
     initialValue,
     validationSchema,
@@ -218,7 +285,8 @@ let studentAttendances = '';
       <Paper
         className={classes.paper}
         variant="elevation"
-        // elevation={4}
+        elevation={4}
+        
         
       >
         <form noValidate onSubmit={handleSubmit}>
@@ -233,63 +301,123 @@ let studentAttendances = '';
               Mark Attendance
             </Typography>
             <Grid container justifyContent={"space-between"}>
+              <Grid sm={6}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <Stack spacing={3}>
-                  {/* <DatePicker
-                    label="Select Date"
-                    inputFormat="dd/MM/yyyy"
-                    value={value}
-                    onChange={handleChange}
-                    renderInput={(params) => <TextField {...params} />}
-                    disabled = {doUpdate}
-                  /> */}
-                  <DesktopDatePicker
-                  label="Date desktop"
+                  <DatePicker
+                  label="Date"
                   inputFormat="MM/dd/yyyy"
                   value={value}
                   onChange={handleChange}
                   renderInput={(params) => <TextField {...params} />}
-        />
+                 />
                 </Stack>
               </LocalizationProvider>
-              <Grid>
+              </Grid>
+              <Grid sm={6} alignContent={"end"}>
                 <Typography
                   variant="h2"
                   component="h2"
                   fontSize="25px"
-                  align="left"
+                  align="right"
                   marginRight="15px"
                 >
                 Class Name: {className}
               </Typography>
               </Grid>
-              {/* <Drop
-                studentClass = {studentClass}
-                classesData = {classesData}
-                handleClassChange={handleClassChange}
-              /> */}
-              {/* <Grid container justifyContent={"space-between"}>
-              
-              </Grid> */}
+              <Grid  spacing={3}>
+                <Button
+                sx={{ marginBottom: "15px", marginTop: "15px" }}
+                style={{
+                  backgroundColor: "white",
+                  color: "grey",
+                }}
+                variant="contained"
+                onClick={handleSelectAll}
+              >
+                Select All
+              </Button>
+              <Button
+                sx={{ marginBottom: "15px", marginTop: "15px", marginLeft: "10px" }}
+                style={{
+                  backgroundColor: "white",
+                  color: "grey",
+                }}
+                variant="contained"
+                onClick={handleUnselectAll}
+              >
+                Unselect All
+              </Button>
+              </Grid>
             </Grid>
-            <AttendenceTable 
-              studentClass = {studentClass}
-              getCheckedAttendance = {getCheckedAttendance}
-              classRecord = {classRecord}
-              selectedRecord = {selectedRecord}
-              doUpdate = {doUpdate}
-              studentClassId = {studentClassId}
-              selectedDate={value}
-            />
-
-            <Box
-              sx={{
-                mt: 2,
-                display: "flex",
-                justifyContent: "space-evenly",
-                alignItems: "center",
-              }}
-            >
+               <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Sr No.</TableCell>
+            <TableCell>Student ID</TableCell>
+            <TableCell>Student Name</TableCell>
+            <TableCell>
+              <Typography style={{
+                fontWeight: "bold"
+              }}>
+              {first!='' && first!=null ?first:new Date().toLocaleDateString()}
+              </Typography>
+              </TableCell>
+            {newArray.sort((a, b) => (a.id > b.id ? 1 : -1)).map((key:any, i:any)=>(
+            // <Fragment >
+                <TableCell colSpan={newArrayLength}>
+                        <Grid
+                          style={{
+                            textAlign: "center",
+                          }}
+                        >
+                        <Button>Edit</Button>
+                        {/* |<Button>D</Button> */}
+                        <Typography>{new Date(JSON.parse(key).createdAt).getDay()+" "+new Date(JSON.parse(key).createdAt).toLocaleString('default', { month: 'long' })}</Typography>
+                      </Grid>
+                    </TableCell>
+                  // </Fragment>
+                  ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {attendenceData.sort((a, b) => (a.id > b.id ? 1 : -1)).map((item, index) => (
+              <TableRow
+                key={item.id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell>{index + 1}</TableCell>
+                <TableCell component="th" scope="row">
+                 <Button
+                 onClick={() =>
+                      navigate(
+                        `/student-attendence/${item.RollNo}/${classId}`
+                      )
+                    }
+                 >{item.RollNo}</Button> 
+                </TableCell>
+                <TableCell>{item.name}</TableCell>
+                <TableCell align="center">
+                  <input
+                    type="checkbox"
+                    id={item.RollNo}
+                    value={item.RollNo}
+                    onChange={handleCheckBoxChange}
+                  />
+                </TableCell>
+                {item.studentAttendance.map((key:any, i:any)=>(
+                  <Fragment key={i}>
+                    <TableCell align="center">{JSON.parse(key).isPresent?"P":"A"}</TableCell>
+                  </Fragment>
+                  ))}
+                  </TableRow>
+                
+            ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+            <Box sx={{ mt: 2, display: "flex", justifyContent: "space-evenly", alignItems: "center", }} >
               <Button
                 type="submit"
                 variant="contained"
@@ -312,7 +440,6 @@ let studentAttendances = '';
           </Stack>
         </form>
       </Paper>
-      <ListClassRecord classRecord = {classRecord} onSelectRecord = {onSelectRecord}/>
 
     </>
   );

@@ -7,10 +7,9 @@ import { getClassesAsync } from '../class/classes.slice';
 import useGetHeight from "../../../custom hooks/useGetHeight";
 import { classTableHead } from "../../../models/class.model";
 import axios from 'axios';
-
-const StudentTable = ({getStudentAttendence}) => {
+// {getStudentAttendence}
+const StudentTable = () => {
   const navigate = useNavigate();
-
   const { classes } = useAppSelector(state=> state.class);
   console.log('classes',classes);
   const handleCLick = () => {
@@ -37,6 +36,7 @@ const StudentTable = ({getStudentAttendence}) => {
                 <TableCell style={{minWidth: 200}}>{item.course.courseName}</TableCell>
                 <TableCell style={{minWidth: 100}}>
                   <IconButton onClick={() => getStudentAttendence(item.id)} color="success" > <Edit /> </IconButton>
+
                 </TableCell>
               </TableRow>
             ))}
