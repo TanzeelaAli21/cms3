@@ -97,6 +97,7 @@ let newDate = '';
       // newArray= res.data.classes.students[0].studentAttendance;
       setNewArray (res.data.classes.students[0].studentAttendance);
       setNewArrayLength(newArray.length);
+      
       console.log("newArray",newArray)
     }).catch(error=>console.log('error123',error));
   };
@@ -114,7 +115,7 @@ let newDate = '';
     getData();
   }, []);
 
-  const [value, setValue] = React.useState<Date | null>(new Date);
+  const [value, setValue] = React.useState<Date | null>(new Date());
   
   const [studentClass, setStudentClass] = React.useState('');
   const [first, setFirst] = React.useState('');
@@ -156,12 +157,13 @@ let newDate = '';
     } )
   };
   const handleChange = (newValue: Date | null) => {
+    console.log("newValue",newValue);
+    let n:any =  newValue;
+    let y:any = n.getFullYear();
+    let m:any = n.getMonth() + 1;
+    let d:any = n.getDate();
+    newDate = m + "/" + d + "/" + y;
     setValue(newValue);
-   let n:any =  newValue;
-   let y:any = n.getFullYear();
-   let m:any = n.getMonth() + 1;
-   let d:any = n.getDate();
-   newDate = m + "/" + d + "/" + y;
    setFirst(m + "/" + d + "/" + y);
   };
   function handleClassName (newdata :any){
@@ -266,7 +268,7 @@ let newDate = '';
       );
       }
       studentAttendances = rows;
-      console.log("event",rows);
+      console.log("event",studentAttendances);
  
   };
  
@@ -378,7 +380,7 @@ let newDate = '';
                         >
                         <Button>Edit</Button>
                         {/* |<Button>D</Button> */}
-                        <Typography>{new Date(JSON.parse(key).createdAt).getDay()+" "+new Date(JSON.parse(key).createdAt).toLocaleString('default', { month: 'long' })}</Typography>
+                        <Typography>{new Date(JSON.parse(key).createdAt).getDate()+" "+new Date(JSON.parse(key).createdAt).toLocaleString('default', { month: 'long' })}</Typography>
                         {/* <center>08</center> */}
                       </Grid>
                     </TableCell>
@@ -427,7 +429,7 @@ let newDate = '';
                     </TableCell>
                     {newArray.map((key:any, i:any, row:any)=>(
                       <Fragment>
-                        <TableCell align="center">{JSON.parse(key).isPresent===true?1:3}</TableCell>
+                        <TableCell align="center">{JSON.parse(key).isPresent?1:3}</TableCell>
                       </Fragment>
                     ))}
                   </TableRow>
