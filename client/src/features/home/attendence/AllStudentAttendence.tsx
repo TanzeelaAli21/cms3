@@ -75,9 +75,9 @@ let newChecked:any = [];
  let rows:any =[];
 let newDate = '';
   const [classesData, setClassesData] = React.useState([]);
+  const [attendenceDataNext, setAttendenceDataNext] = useState<any[]>([]);
   const [className, setClassName] = React.useState('');
   const [attendenceData, setAttendenceData] = useState<any[]>([]);
-  const [attendenceDataNext, setAttendenceDataNext] = useState<any[]>([]);
   const [newArray, setNewArray] = useState<any[]>([]);
   const [newArrayLength, setNewArrayLength] = useState(0);
   // const newClassId, setNewClassId] = React.useState(0);
@@ -97,7 +97,8 @@ let newDate = '';
       // newArray= res.data.classes.students[0].studentAttendance;
       setNewArray (res.data.classes.students[0].studentAttendance);
       setNewArrayLength(newArray.length);
-      console.log("newArray",newArray)
+      
+      console.log("newArray",res.data)
     }).catch(error=>console.log('error123',error));
   };
   useEffect(() => {
@@ -114,7 +115,7 @@ let newDate = '';
     getData();
   }, []);
 
-  const [value, setValue] = React.useState<Date | null>(new Date);
+  const [value, setValue] = React.useState<Date | null>(new Date());
   
   const [studentClass, setStudentClass] = React.useState('');
   const [first, setFirst] = React.useState('');
@@ -142,8 +143,8 @@ let newDate = '';
     })
     .then(res => {
       console.log("response ...currentClass.", res);
-      setClassRecord(res.data.classRecord);
       console.log("currentClass.", res.data.classRecord);
+      setClassRecord(res.data.classRecord);
     })
     .catch((err) => {
       console.log("err........", err);
@@ -156,13 +157,14 @@ let newDate = '';
     } )
   };
   const handleChange = (newValue: Date | null) => {
+    console.log("newValue",newValue);
+    let n:any =  newValue;
+    let y:any = n.getFullYear();
+    let m:any = n.getMonth() + 1;
+    let d:any = n.getDate();
+    newDate = m + "/" + d + "/" + y;
     setValue(newValue);
-   let n:any =  newValue;
-   let y:any = n.getFullYear();
-   let m:any = n.getMonth() + 1;
-   let d:any = n.getDate();
-   newDate = m + "/" + d + "/" + y;
-   setFirst(m + "/" + d + "/" + y);
+    setFirst(m + "/" + d + "/" + y);
   };
   function handleClassName (newdata :any){
     console.log("newdata",newdata);
@@ -201,7 +203,6 @@ let newDate = '';
       console.log("response ....", res);
       console.log("res.data.classes ....", );
       setClassesData(res.data.classes);
-      
       dispatch(createAlert({
         message: res.data.message as string,
         open: true,
@@ -237,6 +238,7 @@ let newDate = '';
         navigate("/mark-attendence");
       }, 500);
   };
+
     const handleSelectAll = () => {
       newChecked = studentClass;
       newChecked.students.map((element:any, index:any) => {
@@ -245,7 +247,7 @@ let newDate = '';
         checkbox.checked = true;
       }
       });
-  };
+    };  
 
       const handleUnselectAll = () => {
       newChecked = studentClass;
@@ -256,8 +258,7 @@ let newDate = '';
       }
       });
   };
-    const handleCheckBoxChange = (event:any) => {
-     
+  const handleCheckBoxChange = (event:any) => {
       if (event.target.checked) {
         rows.push(event.target.value);
       } else{
@@ -266,9 +267,12 @@ let newDate = '';
       );
       }
       studentAttendances = rows;
-      console.log("event",rows);
- 
+      console.log("eventevent",event);
   };
+    const edeitAttendence = (event:any) => {
+      console.log("eventevent",event.target.value);
+  };
+  
  
   const { getFieldProps, handleSubmit, touched, errors, values } = useHandleFormik(
     initialValue,
@@ -290,8 +294,6 @@ let newDate = '';
         className={classes.paper}
         variant="elevation"
         elevation={4}
-        
-        
       >
         <form noValidate onSubmit={handleSubmit}>
           <Stack sx={{ mt: 1 }}>
@@ -376,14 +378,20 @@ let newDate = '';
                             textAlign: "center",
                           }}
                         >
-                        <Button>Edit</Button>
+                        <Button  onClick={edeitAttendence}>Edit</Button>
                         {/* |<Button>D</Button> */}
-                        <Typography>{new Date(JSON.parse(key).createdAt).getDay()+" "+new Date(JSON.parse(key).createdAt).toLocaleString('default', { month: 'long' })}</Typography>
+                        <Typography>{new Date(JSON.parse(key).createdAt).getDate()+" "+new Date(JSON.parse(key).createdAt).toLocaleString('default', { month: 'long' })}</Typography>
                         {/* <center>08</center> */}
                       </Grid>
                     </TableCell>
                   // </Fragment>
                   ))}
+                  <TableCell>
+                    Total Absent
+                  </TableCell>
+                  <TableCell>
+                    Total Present
+                  </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -416,21 +424,10 @@ let newDate = '';
                     <TableCell align="center">{JSON.parse(key).isPresent?"P":"A"}</TableCell>
                   </Fragment>
                   ))}
+                  <TableCell >{item.totalAbsent}</TableCell>
+                  <TableCell >{item.totalPresent}</TableCell>
                   </TableRow>
             ))}
-                  <TableRow>
-                    <TableCell></TableCell>
-                    <TableCell colSpan={3}>
-                      <Typography>
-                        Total Present/Absent Per Day
-                      </Typography>
-                    </TableCell>
-                    {newArray.map((key:any, i:any, row:any)=>(
-                      <Fragment>
-                        <TableCell align="center">{JSON.parse(key).isPresent===true?1:3}</TableCell>
-                      </Fragment>
-                    ))}
-                  </TableRow>
                   
         </TableBody>
       </Table>
@@ -451,7 +448,6 @@ let newDate = '';
               >
                 Submit Attendance
               </Button>
-
             </Box>
           </Stack>
         </form>
