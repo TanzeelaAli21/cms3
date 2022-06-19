@@ -99,8 +99,14 @@ const sideBarItems = {
                 icon: <Grade color="primary" />,
                 path: '/grading'
             }
+            ,
+            {
+                text: 'Classes',
+                icon: <Grade color="primary" />,
+                path: '/view-student-class'
+            }
         ],
-        allAuthorizedPaths: ['', 'profile', 'view-class', 'grading']
+        allAuthorizedPaths: ['', 'profile', 'view-class', 'grading','view-student-class']
     }
 }
 

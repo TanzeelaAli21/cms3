@@ -2,13 +2,13 @@ const prisma = require('../getPrisma');
 const validateUser = require('../utils/checkAuthorization');
 const ErrorResponse = require('../utils/Error');
 
-exports.ViewStudents = async (req,res,next) =>{
-    try{
+exports.ViewStudents = async (req, res, next) => {
+    try {
 
-        const { name, rollNo} = req.query;
-        const {role} = req.User;
-        if(!validateUser.checkAdmin(role))
-            next(new ErrorResponse('Unauthorized route',401));
+        const { name, rollNo } = req.query;
+        const { role } = req.User;
+        if (!validateUser.checkAdmin(role))
+            next(new ErrorResponse('Unauthorized route', 401));
         const allStudents = await prisma.user.findMany({
             where: {
                 role: 'STUDENT',
@@ -37,28 +37,28 @@ exports.ViewStudents = async (req,res,next) =>{
                 DOB: true,
                 active: true,
                 email: true,
-                RollNo: true 
+                RollNo: true
             }
         });
         res.status(200).json({
             success: true,
             students: allStudents
-        }) 
-    }catch(error){
+        })
+    } catch (error) {
         res.status(500).json({
             success: false,
-            message: error.message | "server error" 
+            message: error.message | "server error"
         })
     }
 };
 
-exports.AddStudent = async (req, res, next) =>{
-    try{
-        const {role} = req.User;
-        if(!validateUser.checkAdmin(role))
-            next(new ErrorResponse('Unauthorized route',401));
+exports.AddStudent = async (req, res, next) => {
+    try {
+        const { role } = req.User;
+        if (!validateUser.checkAdmin(role))
+            next(new ErrorResponse('Unauthorized route', 401));
         const { name, fatherName, cnic, DOB, degree, shift, email } = req.body;
-        if(!name ||  !fatherName ||  !cnic || !DOB || !degree || !shift || !email)
+        if (!name || !fatherName || !cnic || !DOB || !degree || !shift || !email)
             next(new ErrorResponse("invalid information"));
         const batch = (+(new Date().getFullYear().toString().slice(-2)));
         const usersLength = (await prisma.user.findMany({
@@ -71,10 +71,10 @@ exports.AddStudent = async (req, res, next) =>{
                 batch: batch
             }
         })).length
-        if(usersLength >= 60)
+        if (usersLength >= 60)
             next(new ErrorResponse("max students reached for a session"));
         const checkUser = await prisma.user.findFirst({
-            where:{
+            where: {
                 OR: [
                     {
                         email: email
@@ -85,10 +85,10 @@ exports.AddStudent = async (req, res, next) =>{
                 ]
             }
         })
-        if(checkUser)
+        if (checkUser)
             next(new ErrorResponse("invalid unique credidentials", 400));
         const addStudent = await prisma.user.create({
-            data:{
+            data: {
                 name: name,
                 father_name: fatherName,
                 cnic: cnic,
@@ -107,15 +107,75 @@ exports.AddStudent = async (req, res, next) =>{
             success: true,
             message: "Student added successfully"
         });
-    }catch(error){
+    } catch (error) {
         next(new ErrorResponse(error.message || "server error", 500));
     }
 }
 
-exports.EditStudent = async (req,res,next) =>{
-    try{
-        
-    }catch(error){
+exports.EditStudent = async (req, res, next) => {
+    try {
+
+    } catch (error) {
         next(new ErrorResponse(error.message || "server error", 500));
+    }
+}
+
+exports.getStudentAttendence = async (req, res, next) => {
+    try {
+        const { role } = req.User;
+        const { id, courseId } = req.query;
+        // if (!validateUser.checkStudent(role)) {
+        //     next(new ErrorResponse("Unauthorized route", 401));
+        // }
+        const classData = await prisma.class.findMany({
+            where: {
+                courseId: parseInt(courseId)
+            },
+            select: {
+                course: {
+                    select: {
+                        id: true,
+                        courseName: true,
+                    }
+                },
+                teacher: {
+                    select: {
+                        id: true,
+                        name: true,
+                    }
+                },
+                AttendanceRecord: {
+                    where: {
+                        studentIds: {
+                            has: parseInt(id)
+                        }
+                    },
+                    select: {
+                        id: true,
+                        createdAt: true,
+                        attendances: {
+                            select: {
+                                createdAt: true,
+                                isPresent: true,
+                            }
+                        }
+                    }
+                }
+            },
+            // ,
+           
+        })
+        console.log(classData, "........classData..........");
+        res.status(200).json({
+            success: true,
+            attendance: classData,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: error.message | "server error",
+        });
     }
 }

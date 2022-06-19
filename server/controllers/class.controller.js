@@ -38,6 +38,7 @@ exports.createClass = async (req, res, next) => {
 
 exports.getAllClasses = async (req, res, next) => {
   try {
+    console.log(req);
     const { role } = req.User;
     let allClasses = null;
     let param = {};
@@ -50,6 +51,14 @@ exports.getAllClasses = async (req, res, next) => {
       param = {
         enrolled: true,
         teacherId: req.User.id
+      }
+    }
+    else if (validateUser.checkStudent(role)){
+      param = {
+        enrolled: true,
+        studentIds: {
+          has: req.User.id
+        }
       }
     }
     else {
