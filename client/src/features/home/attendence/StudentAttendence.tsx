@@ -44,7 +44,8 @@ const StudentAttendence = () => {
   console.log('classes',classes);
   console.log('attendence',attendenceRecord);
   const handleCLick = () => {
-    navigate(`/mark-attendence/${classId}`);
+    navigate(`/get-all-attendence/${classId}`);
+    
   };    
     const handleStatus = () => {
   };

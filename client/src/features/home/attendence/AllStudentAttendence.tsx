@@ -74,12 +74,13 @@ let studentAttendances = '';
 let newChecked:any = [];
  let rows:any =[];
 let newDate = '';
-var classId:any =0;
   const [classesData, setClassesData] = React.useState([]);
   const [className, setClassName] = React.useState('');
   const [attendenceData, setAttendenceData] = useState<any[]>([]);
+  const [attendenceDataNext, setAttendenceDataNext] = useState<any[]>([]);
   const [newArray, setNewArray] = useState<any[]>([]);
   const [newArrayLength, setNewArrayLength] = useState(0);
+  // const newClassId, setNewClassId] = React.useState(0);
   const getData = async () => {
     var url = (window.location).href;
     var classId = url.substring(url.lastIndexOf('/') + 1);
@@ -120,6 +121,7 @@ var classId:any =0;
   const [studentClassId, setStudentClassId] = React.useState();
   const [classRecord, setClassRecord] = React.useState([]);
   const [selectedRecord, setSelectedRecord] = React.useState('');
+  const [newID, setNewID] = React.useState(0);
  
   const [doUpdate, setDoUpdate] = React.useState(false); 
   const onSelectRecord = (data: string) => {
@@ -166,7 +168,9 @@ var classId:any =0;
     console.log("newdata",newdata);
     var url = (window.location).href;
     var newURL = url.split('/', 10);
-     classId = newURL[4];
+    var classId = newURL[4];
+    setNewID(parseInt(classId));
+    //  setNewClassId(classId);
     for(let i=0; i<newdata.length;i++){
         if(newdata[i].id==classId){
           setClassName(newdata[i].course.courseName);
@@ -303,11 +307,11 @@ var classId:any =0;
             <Grid container justifyContent={"space-between"}>
               <Grid sm={6}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <Stack spacing={3}>
+                <Stack spacing={3}>             
                   <DatePicker
                   label="Date"
                   inputFormat="MM/dd/yyyy"
-                  value={value}
+                  value={value} 
                   onChange={handleChange}
                   renderInput={(params) => <TextField {...params} />}
                  />
@@ -375,6 +379,7 @@ var classId:any =0;
                         <Button>Edit</Button>
                         {/* |<Button>D</Button> */}
                         <Typography>{new Date(JSON.parse(key).createdAt).getDay()+" "+new Date(JSON.parse(key).createdAt).toLocaleString('default', { month: 'long' })}</Typography>
+                        {/* <center>08</center> */}
                       </Grid>
                     </TableCell>
                   // </Fragment>
@@ -392,7 +397,7 @@ var classId:any =0;
                  <Button
                  onClick={() =>
                       navigate(
-                        `/student-attendence/${item.RollNo}/${classId}`
+                        `/student-attendence/${item.RollNo}/${newID}`
                       )
                     }
                  >{item.RollNo}</Button> 
@@ -406,14 +411,27 @@ var classId:any =0;
                     onChange={handleCheckBoxChange}
                   />
                 </TableCell>
-                {item.studentAttendance.map((key:any, i:any)=>(
+                {item.studentAttendance.map((key:any, i:any, row:any)=>(
                   <Fragment key={i}>
                     <TableCell align="center">{JSON.parse(key).isPresent?"P":"A"}</TableCell>
                   </Fragment>
                   ))}
                   </TableRow>
-                
             ))}
+                  <TableRow>
+                    <TableCell></TableCell>
+                    <TableCell colSpan={3}>
+                      <Typography>
+                        Total Present/Absent Per Day
+                      </Typography>
+                    </TableCell>
+                    {newArray.map((key:any, i:any, row:any)=>(
+                      <Fragment>
+                        <TableCell align="center">{JSON.parse(key).isPresent===true?1:3}</TableCell>
+                      </Fragment>
+                    ))}
+                  </TableRow>
+                  
         </TableBody>
       </Table>
     </TableContainer>
@@ -424,10 +442,8 @@ var classId:any =0;
                 color="primary"
                 disabled={
                   errors.courseId ||
-                    errors.courseName ||
-                    errors.creditHours
-                    ? true
-                    : false
+                  errors.courseName ||
+                  errors.creditHours? true : false
                 }
                 startIcon={<Save />}
                 fullWidth

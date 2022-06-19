@@ -229,14 +229,6 @@ const [classesData, setClassesData] = React.useState([]);
             <Grid container justifyContent={"space-between"}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <Stack spacing={3}>
-                  {/* <DatePicker
-                    label="Select Date"
-                    inputFormat="dd/MM/yyyy"
-                    value={value}
-                    onChange={handleChange}
-                    renderInput={(params) => <TextField {...params} />}
-                    disabled = {doUpdate}
-                  /> */}
                   <DesktopDatePicker
                   label="Date desktop"
                   inputFormat="MM/dd/yyyy"
@@ -266,7 +258,7 @@ const [classesData, setClassesData] = React.useState([]);
               
               </Grid> */}
             </Grid>
-            <AttendenceTable 
+            {/* <AttendenceTable 
               studentClass = {studentClass}
               getCheckedAttendance = {getCheckedAttendance}
               classRecord = {classRecord}
@@ -274,7 +266,7 @@ const [classesData, setClassesData] = React.useState([]);
               doUpdate = {doUpdate}
               studentClassId = {studentClassId}
               selectedDate={value}
-            />
+            /> */}
 
             <Box
               sx={{
