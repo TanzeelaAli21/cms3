@@ -74,11 +74,12 @@ const StudentAttendence = () => {
           <TableBody>
             {!attendence ? (
               "NO Records found"
-            ) : attendence.map((item: IAttendenceRecord) => (
+            ) : attendence.map((item: IAttendenceRecord,i:any) => (
               <TableRow key={item.id} hover>
-                <TableCell style={{minWidth: 100}}>{item.id}</TableCell>
+                {console.log("item",item)}
+                <TableCell style={{minWidth: 100}}>{i+1}</TableCell>
                 {/* <TableCell style={{minWidth: 100}}>{item.courseId}</TableCell> */}
-                <TableCell style={{minWidth: 100}}>{item.createdAt}</TableCell>
+                <TableCell style={{minWidth: 100}}>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
                  <TableCell style={{minWidth: 100}}>
                   <input
                     type="checkbox"

@@ -72,7 +72,9 @@ const AllStudentAttendence = () => {
 let studentAttendances = '';
 // let newArray:any = [];
 let newChecked:any = [];
+ let rows:any =[];
 let newDate = '';
+var classId:any =0;
   const [classesData, setClassesData] = React.useState([]);
   const [className, setClassName] = React.useState('');
   const [attendenceData, setAttendenceData] = useState<any[]>([]);
@@ -164,7 +166,7 @@ let newDate = '';
     console.log("newdata",newdata);
     var url = (window.location).href;
     var newURL = url.split('/', 10);
-    var classId = newURL[4];
+     classId = newURL[4];
     for(let i=0; i<newdata.length;i++){
         if(newdata[i].id==classId){
           setClassName(newdata[i].course.courseName);
@@ -233,23 +235,37 @@ let newDate = '';
   };
     const handleSelectAll = () => {
       newChecked = studentClass;
-      newChecked.map((element:any, index:any) => {
-      console.log("`${element.RollNo}`",index);
-    //  var newElement = <HTMLInputElement>document.getElementById('BSEF22M501');
-    const checkbox = document.getElementById( 'BSEF22M501', ) as HTMLInputElement | null;
-    if (checkbox != null) {
-      checkbox.checked = true;
-    }
-      
-    //  var isChecked =  newElement.checked;
-    //  isChecked = true;
-      // if (element.id) {
-      //   rows[index].isPresent = true;
-      //   presentStudents.push(element.id);
-      // }
-    });
-    // getCheckedAttendance(presentStudents);
+      newChecked.students.map((element:any, index:any) => {
+      const checkbox = document.getElementById( `${element.RollNo}`, ) as HTMLInputElement | null;
+      if (checkbox != null) {
+        checkbox.checked = true;
+      }
+      });
   };
+
+      const handleUnselectAll = () => {
+      newChecked = studentClass;
+      newChecked.students.map((element:any, index:any) => {
+      const checkbox = document.getElementById( `${element.RollNo}`, ) as HTMLInputElement | null;
+      if (checkbox != null) {
+        checkbox.checked = false;
+      }
+      });
+  };
+    const handleCheckBoxChange = (event:any) => {
+     
+      if (event.target.checked) {
+        rows.push(event.target.value);
+      } else{
+        rows = rows.filter(
+        (val:any) => val != event.target.value
+      );
+      }
+      studentAttendances = rows;
+      console.log("event",rows);
+ 
+  };
+ 
   const { getFieldProps, handleSubmit, touched, errors, values } = useHandleFormik(
     initialValue,
     validationSchema,
@@ -289,8 +305,8 @@ let newDate = '';
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <Stack spacing={3}>
                   <DatePicker
-                  label="Date desktop"
-                  inputFormat="dd/MM/yyyy"
+                  label="Date"
+                  inputFormat="MM/dd/yyyy"
                   value={value}
                   onChange={handleChange}
                   renderInput={(params) => <TextField {...params} />}
@@ -309,7 +325,7 @@ let newDate = '';
                 Class Name: {className}
               </Typography>
               </Grid>
-              <Grid>
+              <Grid  spacing={3}>
                 <Button
                 sx={{ marginBottom: "15px", marginTop: "15px" }}
                 style={{
@@ -320,6 +336,17 @@ let newDate = '';
                 onClick={handleSelectAll}
               >
                 Select All
+              </Button>
+              <Button
+                sx={{ marginBottom: "15px", marginTop: "15px", marginLeft: "10px" }}
+                style={{
+                  backgroundColor: "white",
+                  color: "grey",
+                }}
+                variant="contained"
+                onClick={handleUnselectAll}
+              >
+                Unselect All
               </Button>
               </Grid>
             </Grid>
@@ -337,7 +364,7 @@ let newDate = '';
               {first!='' && first!=null ?first:new Date().toLocaleDateString()}
               </Typography>
               </TableCell>
-            {newArray.map((key:any, i:any)=>(
+            {newArray.sort((a, b) => (a.id > b.id ? 1 : -1)).map((key:any, i:any)=>(
             // <Fragment >
                 <TableCell colSpan={newArrayLength}>
                         <Grid
@@ -348,7 +375,6 @@ let newDate = '';
                         <Button>Edit</Button>
                         {/* |<Button>D</Button> */}
                         <Typography>{new Date(JSON.parse(key).createdAt).getDay()+" "+new Date(JSON.parse(key).createdAt).toLocaleString('default', { month: 'long' })}</Typography>
-                        {/* <center>08</center> */}
                       </Grid>
                     </TableCell>
                   // </Fragment>
@@ -356,14 +382,20 @@ let newDate = '';
           </TableRow>
         </TableHead>
         <TableBody>
-          {attendenceData.map((item, index) => (
+          {attendenceData.sort((a, b) => (a.id > b.id ? 1 : -1)).map((item, index) => (
               <TableRow
                 key={item.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell>{index + 1}</TableCell>
                 <TableCell component="th" scope="row">
-                  {item.RollNo}
+                 <Button
+                 onClick={() =>
+                      navigate(
+                        `/student-attendence/${item.RollNo}/${classId}`
+                      )
+                    }
+                 >{item.RollNo}</Button> 
                 </TableCell>
                 <TableCell>{item.name}</TableCell>
                 <TableCell align="center">
@@ -371,7 +403,7 @@ let newDate = '';
                     type="checkbox"
                     id={item.RollNo}
                     value={item.RollNo}
-                    // onChange={handleChange}
+                    onChange={handleCheckBoxChange}
                   />
                 </TableCell>
                 {item.studentAttendance.map((key:any, i:any)=>(

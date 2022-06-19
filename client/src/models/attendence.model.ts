@@ -8,4 +8,4 @@ export interface ICreateAttendeceRecord {
     attendanceRecord: any,
 }
 
-export const StudentAttendenceTableHead = ['Attendence Id', 'Date', 'Status', 'Attendence'];
+export const StudentAttendenceTableHead = ['Sr No.', 'Date', 'Status', 'Attendence'];

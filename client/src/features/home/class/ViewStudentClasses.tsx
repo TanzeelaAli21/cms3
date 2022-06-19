@@ -51,7 +51,7 @@ const getStudentAttendence = (classId: string) => {
       <TableContainer
         sx={{maxHeight: (+useGetHeight().height-175)}}
       >
-       <StudentTable getStudentAttendence = {getStudentAttendence}/>
+       {/* <StudentTable getStudentAttendence = {getStudentAttendence}/> */}
       </TableContainer>
       </Paper>
     </>

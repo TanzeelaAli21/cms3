@@ -50,6 +50,7 @@ const ViewClasses = () => {
                 <TableCell style={{minWidth: 200}}>{item.course.courseName}</TableCell>
                 <TableCell style={{minWidth: 100}}>
                   <IconButton onClick={() => navigate(`/get-all-attendence/${item.id}`)} color="success" > <Edit /> </IconButton>
+                  {/* <IconButton onClick={() => navigate(`/mark-attendence/${item.id}`)} color="success" > <Edit /> </IconButton> */}
                 </TableCell>
               </TableRow>
             ))}
