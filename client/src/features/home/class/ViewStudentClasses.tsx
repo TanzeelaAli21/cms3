@@ -22,14 +22,15 @@ const ViewClasses = () => {
     
   },[])
   const { classes } = useAppSelector(state=> state.class);
-  let classId = '';
+  const [classId, setClassId] = React.useState('');
+
   console.log('classes',classes);
   const handleCLick = () => {
     navigate("/create-class");
   };    
 
 const getStudentAttendence = (classId: string) => {
-        classId = classId
+        setClassId(classId)
         let token = localStorage.getItem('token') as string; 
         axios.get(`/student/get-student-attendence`, {
         headers: {
@@ -40,6 +41,7 @@ const getStudentAttendence = (classId: string) => {
         }
       }).then((res) => {
         // console.log("mawra", res.data);
+        
         setAttendenceList(res.data)
         console.log(attendenceList, "attendenceList");
         
@@ -47,12 +49,7 @@ const getStudentAttendence = (classId: string) => {
 }  
   return (
     <>
-      <Button
-        onClick={handleCLick}
-        variant="contained"
-        color="primary"
-        startIcon={<Add />}
-      >Add Class</Button>
+   
       <br /> <br />
       <Paper sx={{width: '100%', overflow: 'hidden'}}>
       <TableContainer
@@ -61,7 +58,7 @@ const getStudentAttendence = (classId: string) => {
           {(attendenceList.length === 0) ?
                  <StudentTable getStudentAttendence = {getStudentAttendence}/>
             :
-                <AttendenceTable attendenceList = {attendenceList} classId = {classId}/>
+                <AttendenceTable attendenceList = {attendenceList} classId = {classId} />
             }
 
       </TableContainer>

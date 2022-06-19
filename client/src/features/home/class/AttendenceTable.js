@@ -10,13 +10,9 @@ import axios from 'axios';
 
 const AttendenceTable = ({attendenceList, classId}) => {
   const navigate = useNavigate();
-
-  const [classes, setClasses] = React.useState({});
-  useEffect(()=>{
-    let list = typeof attendanceList !== 'undefined' ?
-     attendenceList.filter(list => list.id == classId ) : [];
-    setClasses(list[0])   
-  },[])
+  console.log(attendenceList, "............attendenceList............");
+   let classes= attendenceList.attendance.filter(att => att.id == classId)
+   console.log(classId, "............classes............");
 
   console.log('classes',classes);
   const handleCLick = () => {
@@ -34,14 +30,14 @@ const AttendenceTable = ({attendenceList, classId}) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {typeof classes !== 'undefined' && classes.length <=0 ? (
+            {classes.length <=0 ? (
               "NO Classes found"
-            ) :typeof classes !== 'undefined' && classes.AttendanceRecord &&
-             classes.AttendanceRecord.attendances.map(item => (
+            ) :classes[0] && classes[0].AttendanceRecord && classes[0].AttendanceRecord[0] && 
+             classes[0].AttendanceRecord[0].attendances.map(item => (
               <TableRow key={item.id} hover>
                 <TableCell style={{minWidth: 100}}>{item.id}</TableCell>
                 <TableCell style={{minWidth: 100}}>{item.createdAt}</TableCell>
-                <TableCell style={{minWidth: 200}}>{item.isPresent}</TableCell>
+                <TableCell style={{minWidth: 200}}>{item.isPresent ? 'P' : 'A'}</TableCell>
               </TableRow>
             ))}
           </TableBody>

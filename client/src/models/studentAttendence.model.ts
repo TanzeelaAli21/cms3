@@ -1,6 +1,6 @@
 export interface ICreateClass {
     Id: number,
-    courseName: string,
+     date: string,
     isPresent: boolean,
     
 }
