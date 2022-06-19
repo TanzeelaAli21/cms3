@@ -8,7 +8,7 @@ import useGetHeight from "../../../custom hooks/useGetHeight";
 import { classTableHead } from "../../../models/class.model";
 import axios from 'axios';
 // {getStudentAttendence}
-const StudentTable = () => {
+const StudentTable = ({getStudentAttendence}) => {
   const navigate = useNavigate();
   const { classes } = useAppSelector(state=> state.class);
   console.log('classes',classes);
