@@ -170,12 +170,23 @@ exports.getClassStudentAttendences = async (req, res, next) => {
     });
     const students = [];
     allClasses.students.forEach((student, index) => {
-      students.push({ ...student, studentAttendance: [] });
+      students.push({ ...student, studentAttendance: [], totalPresent: 0, totalAbsent: 0 });
+      let aCount = 0;
+      let  pCount = 0;
       attendences.forEach((attendence, index2) => {
         if (attendence.studentId == student.RollNo) {
           students[index].studentAttendance.push(JSON.stringify(attendence));
+          if(attendence.isPresent) {
+            pCount +=1;
+          }
+          else  {
+            aCount +=1;
+          }
         }
+
       });
+      students[index].totalPresent = pCount;
+      students[index].totalAbsent = aCount;
     });
     allClasses.students = students;
     res.status(200).json({

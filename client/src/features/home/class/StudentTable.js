@@ -1,12 +1,22 @@
 import { Add, Delete, Edit } from "@mui/icons-material";
-import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, } from "@mui/material";
+import {
+  Button,
+  IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import React, { useEffect } from "react";
-import {useAppDispatch, useAppSelector} from '../../../hooks';
+import { useAppDispatch, useAppSelector } from "../../../hooks";
 import { useNavigate } from "react-router-dom";
-import { getClassesAsync } from '../class/classes.slice';
+import { getClassesAsync } from "../class/classes.slice";
 import useGetHeight from "../../../custom hooks/useGetHeight";
 import { classTableHead } from "../../../models/class.model";
-import axios from 'axios';
+import axios from "axios";
 // {getStudentAttendence}
 const StudentTable = ({ getStudentAttendence }) => {
   const navigate = useNavigate();
