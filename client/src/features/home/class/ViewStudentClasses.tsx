@@ -7,35 +7,42 @@ import { getClassesAsync } from '../class/classes.slice';
 import useGetHeight from "../../../custom hooks/useGetHeight";
 import { classTableHead } from "../../../models/class.model";
 import StudentTable from "./StudentTable";
+import AttendenceTable from "./AttendenceTable";
+
 import axios from 'axios';
 
 const ViewClasses = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [attendenceList, setAttendenceList] = React.useState([]);
   useEffect(()=>{
     const getClasses = async () => await dispatch(getClassesAsync(localStorage.getItem('token') as string));
     getClasses();
-    const userId = localStorage.getItem("userId");
-    console.log(userId, "userid.......");
+    setAttendenceList([])
     
   },[])
   const { classes } = useAppSelector(state=> state.class);
+  let classId = '';
   console.log('classes',classes);
   const handleCLick = () => {
     navigate("/create-class");
   };    
 
 const getStudentAttendence = (classId: string) => {
+        classId = classId
         let token = localStorage.getItem('token') as string; 
-        axios.get(`/attendence/get-all-attendence`, {
+        axios.get(`/student/get-student-attendence`, {
         headers: {
           'Authorization': `Bearer ${token}`
         },
         params: {
-          cid: classId
+            classId
         }
       }).then((res) => {
-        console.log("mawra", res.data);
+        // console.log("mawra", res.data);
+        setAttendenceList(res.data)
+        console.log(attendenceList, "attendenceList");
+        
       }).catch(error=>console.log('error123',error));
 }  
   return (
@@ -51,7 +58,11 @@ const getStudentAttendence = (classId: string) => {
       <TableContainer
         sx={{maxHeight: (+useGetHeight().height-175)}}
       >
-       <StudentTable getStudentAttendence = {getStudentAttendence}/>
+          {(attendenceList.length === 0) ?
+                 <StudentTable getStudentAttendence = {getStudentAttendence}/>
+            :
+                <AttendenceTable attendenceList = {attendenceList} classId = {classId}/>
+            }
       </TableContainer>
       </Paper>
     </>

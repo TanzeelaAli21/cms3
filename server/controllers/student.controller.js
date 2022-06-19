@@ -123,15 +123,17 @@ exports.EditStudent = async (req, res, next) => {
 exports.getStudentAttendence = async (req, res, next) => {
     try {
         const { role } = req.User;
-        const { id, courseId } = req.query;
+        const {  classId } = req.query;
+        const id = req.User.id
         // if (!validateUser.checkStudent(role)) {
         //     next(new ErrorResponse("Unauthorized route", 401));
         // }
         const classData = await prisma.class.findMany({
             where: {
-                courseId: parseInt(courseId)
+                id: parseInt(classId)
             },
             select: {
+                id: true,
                 course: {
                     select: {
                         id: true,
@@ -155,6 +157,7 @@ exports.getStudentAttendence = async (req, res, next) => {
                         createdAt: true,
                         attendances: {
                             select: {
+                                id: true,
                                 createdAt: true,
                                 isPresent: true,
                             }

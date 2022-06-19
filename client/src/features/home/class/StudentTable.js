@@ -36,7 +36,7 @@ const StudentTable = ({getStudentAttendence}) => {
                 <TableCell style={{minWidth: 100}}>{item.course.courseId}</TableCell>
                 <TableCell style={{minWidth: 200}}>{item.course.courseName}</TableCell>
                 <TableCell style={{minWidth: 100}}>
-                  <IconButton onClick={() => getStudentAttendence()} color="success" > <Edit /> </IconButton>
+                  <IconButton onClick={() => getStudentAttendence(item.id)} color="success" > <Edit /> </IconButton>
                 </TableCell>
               </TableRow>
             ))}
