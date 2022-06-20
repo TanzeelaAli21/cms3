@@ -15,5 +15,5 @@ export interface ICreateClass {
 //     students: string,
 // }
 
-export const classTableHead = ['ID', 'Course Name', 'Attendence'];
+export const classTableHead = ['ID', 'Date', 'Attendence'];
 
