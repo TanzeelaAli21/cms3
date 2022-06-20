@@ -1,6 +1,6 @@
 export interface ICreateClass {
     Id: number,
-     date: string,
+    date: string,
     isPresent: boolean,
     
 }

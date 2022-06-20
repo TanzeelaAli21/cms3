@@ -39,18 +39,34 @@ exports.markAttendenceasync = async (req, res, next) => {
       isPresent: presents.indexOf(person.RollNo) != -1 ? true : false,
     }));
     const studentIds = req.body.currentClass.studentIds;
+    console.log(classId, "classId");
+    console.log(date, "date");
+
+    console.log(students, "students");
+    console.log(presents, "presents");
+
+    console.log(req.body.doUpdate, "req.body.doUpdate");
+    console.log( req.body.selectedRecord, "req.body.selectedRecord");
+
+
     // next(new ErrorResponse("Unauthorized route", 401));
     if (!classId || !date)
       next(new ErrorResponse("Enter correct details", 400));
 
     if (req.body.doUpdate) {
+      let selectedRecord = req.body.selectedRecord;
+      selectedRecord= selectedRecord.split(",");
+      let presentStudents = presents.split(",")
+      selectedRecord= selectedRecord.map((arr) => {
+        return parseInt(arr)
+      })
       let ret = await prisma.attendance.updateMany({
         data: {
           isPresent: true,
         },
         where: {
-          attendanceRecordId: req.body.selectedRecord,
-          studentId: { in: presents },
+          id: {in: selectedRecord},
+          studentId: { in: presentStudents },
         },
       });
       ret = await prisma.attendance.updateMany({
@@ -58,10 +74,10 @@ exports.markAttendenceasync = async (req, res, next) => {
           isPresent: false,
         },
         where: {
-          attendanceRecordId: req.body.selectedRecord,
+          id: {in: selectedRecord},
           NOT: {
             studentId: {
-              in: presents,
+              in: presentStudents,
             },
           },
         },

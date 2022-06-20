@@ -69,9 +69,11 @@ const useStyles = makeStyles({
 });
 
 const AllStudentAttendence = () => {
-let studentAttendances = '';
+
+let studentAttendances: any[] = [];
 // let newArray:any = [];
 let newChecked:any = [];
+let selectedAttendencesIds:any = [];
  let rows:any =[];
 let newDate = '';
   const [classesData, setClassesData] = React.useState([]);
@@ -126,7 +128,7 @@ let newDate = '';
  
   const [doUpdate, setDoUpdate] = React.useState(false); 
   const onSelectRecord = (data: string) => {
-    setSelectedRecord(data[0])
+    setSelectedRecord(data)
     setDoUpdate(true);
   }
   function handleClassChange (event: any) {
@@ -181,19 +183,19 @@ let newDate = '';
       }
   };
 
-  const getCheckedAttendance = ( checkedStudents: string)=> {
-    studentAttendances = checkedStudents;
-    console.log(studentAttendances, ".....checkedStudents......");
-  }
+  // const getCheckedAttendance = ( checkedStudents: string)=> {
+  //   studentAttendances = checkedStudents;
+  //   console.log(studentAttendances, ".....checkedStudents......");
+  // }
   const submitAttendence = () =>{
-    console.log("submit attendence......");
+    console.log("submit attendence......", selectedAttendencesIds);
     let token = localStorage.getItem('token') as string; 
     axios.post(`/attendence/create-attendence`,{
       date: value,
-      presents:studentAttendances,
+      presents: localStorage.getItem("presents"),
        currentClass: studentClass,
        doUpdate: doUpdate,
-       selectedRecord: selectedRecord
+       selectedRecord: localStorage.getItem("selectedAttendencesIds")
       } ,{
       headers: {
         'Authorization': `Bearer ${token}`
@@ -243,6 +245,7 @@ let newDate = '';
       newChecked = studentClass;
       newChecked.students.map((element:any, index:any) => {
       const checkbox = document.getElementById( `${element.RollNo}`, ) as HTMLInputElement | null;
+      
       if (checkbox != null) {
         checkbox.checked = true;
       }
@@ -259,6 +262,7 @@ let newDate = '';
       });
   };
   const handleCheckBoxChange = (event:any) => {
+    
       if (event.target.checked) {
         rows.push(event.target.value);
       } else{
@@ -266,11 +270,67 @@ let newDate = '';
         (val:any) => val != event.target.value
       );
       }
+      localStorage.setItem("presents", rows)
       studentAttendances = rows;
       console.log("eventevent",event);
+      console.log("...............inside checbox....................",studentAttendances);
+
+
   };
-    const edeitAttendence = (event:any) => {
-      console.log("eventevent",event.target.value);
+    const edeitAttendence = (event:any, index:any) => {
+      console.log(newArray, ".........newArray........");
+      console.log(index, ".........index........");
+
+      console.log(attendenceData, ".........attendenceData........");
+      
+     const editStudentList = attendenceData.map((stu) => {
+       return stu.studentAttendance[index]
+      })
+      console.log(editStudentList, "......editStudentList.......");
+      let selectedIds = editStudentList.map((att) => {
+        let ele = JSON.parse(att);
+        return ele.id
+      })
+      selectedAttendencesIds = selectedIds;
+      localStorage.setItem("selectedAttendencesIds", selectedAttendencesIds)
+      console.log(selectedAttendencesIds, "........selectedAttendencesIds.......");
+      // setDoUpdate(true);
+      // onSelectRecord(selectedIds);
+
+      event = JSON.parse(event);
+      console.log("eventevent",event);
+      newChecked = studentClass;
+      editStudentList.map((element:any, index:any) => {
+      let val = JSON.parse(element)  
+      const checkbox  = document.getElementById( `${val.studentId}`, ) as HTMLInputElement | null;
+      
+      if (checkbox != null) {
+        if (val.isPresent) {
+          checkbox.checked = true;
+        }
+        else {
+          checkbox.checked = false;
+        }
+        setDoUpdate(true);
+        // setSelectedRecord(event);
+
+        checkbox.addEventListener('change', handleCheckBoxChange)  
+        const eventL = new Event('change');  
+        checkbox.dispatchEvent(eventL);
+      
+      }
+      });
+
+      if (event.isPresent) {
+        const checkbox = document.getElementById( `${event.stuentId}`, ) as HTMLInputElement | null;
+        console.log(checkbox, "....checkbox");
+        
+        if (checkbox != null) {
+          checkbox.checked = true;
+        }
+      }
+    //  let editElement =  newArray.filter((arr) => arr.id == event.id)
+     
   };
   
  
@@ -378,7 +438,7 @@ let newDate = '';
                             textAlign: "center",
                           }}
                         >
-                        <Button  onClick={edeitAttendence}>Edit</Button>
+                        <Button  onClick={() => edeitAttendence(key, i)}>Edit</Button>
                         {/* |<Button>D</Button> */}
                         <Typography>{new Date(JSON.parse(key).createdAt).getDate()+" "+new Date(JSON.parse(key).createdAt).toLocaleString('default', { month: 'long' })}</Typography>
                         {/* <center>08</center> */}
