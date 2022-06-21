@@ -22,8 +22,8 @@ const AttendenceTable = ({ attendenceList, classId }) => {
   const navigate = useNavigate();
   console.log(attendenceList, "............attendenceList............");
   let classes = attendenceList.attendance.filter((att) => att.id == classId);
-  console.log(classId, "............classes............");
-
+  console.log(classes, "............classes............");
+   let index = 0;
   console.log("classes", classes);
   const handleCLick = () => {
     navigate("/create-class");
@@ -43,12 +43,14 @@ const AttendenceTable = ({ attendenceList, classId }) => {
         <TableBody>
           {classes.length <= 0
             ? "NO Classes found"
-            : classes[0] &&
-              classes[0].AttendanceRecord &&
-              classes[0].AttendanceRecord[0] &&
-              classes[0].AttendanceRecord[0].attendances.map((item, i) => (
+            : classes &&
+            classes[0].AttendanceRecord.map((record, ind) => (
+            //   classes[0].AttendanceRecord &&
+            //   classes[0].AttendanceRecord[0] &&
+            record&&
+              record.attendances.map((item, i) => (
                 <TableRow key={item.id} hover>
-                  <TableCell style={{ minWidth: 100 }}>{i + 1}</TableCell>
+                  <TableCell style={{ minWidth: 100 }}>{index += 1}</TableCell>
                   <TableCell style={{ minWidth: 100 }}>
                     {new Date(item.createdAt).toLocaleDateString()}
                   </TableCell>
@@ -56,7 +58,8 @@ const AttendenceTable = ({ attendenceList, classId }) => {
                     {item.isPresent ? "P" : "A"}
                   </TableCell>
                 </TableRow>
-              ))}
+              ))))
+            }
         </TableBody>
       </Table>
     </>

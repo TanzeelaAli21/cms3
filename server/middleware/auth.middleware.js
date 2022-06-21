@@ -23,7 +23,8 @@ exports.protect = async (req, res, next) =>{
                 name: true,
                 designation: true,
                 email: true,
-                role: true
+                role: true,
+                RollNo: true
             }
         })
 
