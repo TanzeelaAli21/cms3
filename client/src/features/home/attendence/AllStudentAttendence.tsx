@@ -440,7 +440,7 @@ let newDate = '';
                         >
                         <Button  onClick={() => edeitAttendence(key, i)}>Edit</Button>
                         {/* |<Button>D</Button> */}
-                        <Typography>{new Date(JSON.parse(key).createdAt).getDate()+" "+new Date(JSON.parse(key).createdAt).toLocaleString('default', { month: 'long' })}</Typography>
+                        <Typography>{new Date(JSON.parse(key).attendanceRecord.createdAt).getDate()+" "+new Date(JSON.parse(key).createdAt).toLocaleString('default', { month: 'long' })}</Typography>
                         {/* <center>08</center> */}
                       </Grid>
                     </TableCell>

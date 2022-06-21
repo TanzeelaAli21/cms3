@@ -182,6 +182,12 @@ exports.getClassStudentAttendences = async (req, res, next) => {
         createdAt: true,
         isPresent: true,
         studentId: true,
+        attendanceRecord: {
+          select: {
+            createdAt: true,
+          }
+        }
+
       },
     });
     const students = [];
@@ -204,6 +210,7 @@ exports.getClassStudentAttendences = async (req, res, next) => {
       students[index].totalPresent = pCount;
       students[index].totalAbsent = aCount;
     });
+    console.log(students, "......students.........");
     allClasses.students = students;
     res.status(200).json({
       success: true,
