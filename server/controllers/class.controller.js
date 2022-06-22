@@ -108,13 +108,23 @@ exports.getClassStudents = async (req, res, next) => {
   try {
     console.log("inside classes..............");
     const { role } = req.User;
-    if (!validateUser.checkAdmin(role)) {
+    let params = {};
+    if (validateUser.checkAdmin(role)) {
+      params = {
+        enrolled: true,
+      }
+    }
+    else if (validateUser.checkTeacher(role)) {
+      params = {
+        enrolled: true,
+        teacherId: req.User.id
+      }
+    }
+    else {
       next(new ErrorResponse("Unauthorized route", 401));
     }
     const allClasses = await prisma.class.findMany({
-      where: {
-        enrolled: true,
-      },
+      where: params,
       orderBy: {
         courseId: "asc",
       },
@@ -154,24 +164,28 @@ exports.getClassStudents = async (req, res, next) => {
 
 exports.classRecord = async (req, res, next) => {
   try {
-    console.log("inside class record..............", req.body);
+    console.log("inside class record..............", req.body.currentClass.id);
     const { role } = req.User;
-    if (!validateUser.checkAdmin(role)) {
-      next(new ErrorResponse("Unauthorized route", 401));
-    }
-    const currentClass = await prisma.attendanceRecord.findMany({
-      where: {
-        classId: req.body.currentClass.id,
-      },
-      include: {
-        attendances: {
-          select: {
-            studentId: true,
-            isPresent: true,
+    let currentClass = [];
+    if (!validateUser.checkStudent(role)) {
+       currentClass = await prisma.attendanceRecord.findMany({
+        where: {
+          classId: req.body.currentClass.id,
+        },
+        include: {
+          attendances: {
+            select: {
+              studentId: true,
+              isPresent: true,
+            },
           },
         },
-      },
-    });
+      });
+    }
+    else {
+      next(new ErrorResponse("Unauthorized route", 401));
+    }
+
     console.log(" currentClass", currentClass);
     res.status(200).json({
       success: true,

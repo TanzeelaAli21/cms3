@@ -148,7 +148,7 @@ exports.getClassStudentAttendences = async (req, res, next) => {
     else if (validateUser.checkTeacher(role)) {
       params = {
         id: parseInt(req.query.cid),
-        teacherId: req.User.id
+        // teacherId: req.User.id
       }
     }
     else {

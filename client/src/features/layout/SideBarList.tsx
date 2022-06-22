@@ -74,6 +74,7 @@ const sideBarItems = {
                 icon: <HomeOutlined color="primary" />,
                 path: '/'
             },
+
              {
                 text: 'View Classes',
                 icon: <Create color="primary" />,
@@ -85,7 +86,7 @@ const sideBarItems = {
                 path: '/grading'
             }
         ],
-        allAuthorizedPaths: ['', 'profile', 'view-class', 'grading']
+        allAuthorizedPaths: ['', 'profile', 'view-class', 'grading','mark-attendence','get-all-attendence', 'student-attendence']
     },
     STUDENT: {
         routes: [
